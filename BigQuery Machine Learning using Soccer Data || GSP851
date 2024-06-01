@@ -1,0 +1,5 @@
+curl -LO https://raw.githubusercontent.com/gcpsolution99/GCP-solution/main/gsp851.sh
+
+
+sudo chmod +x gsp851.sh
+./gsp851.sh
