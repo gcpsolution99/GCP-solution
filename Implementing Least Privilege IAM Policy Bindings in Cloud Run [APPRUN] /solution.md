@@ -11,7 +11,7 @@ export REGION=
 ```
 curl -LO raw.githubusercontent.com/gcpsolution99/GCP-solution/main/Implementing%20Least%20Privilege%20IAM%20Policy%20Bindings%20in%20Cloud%20Run%20%5BAPPRUN%5D%20/abhi.sh
 
-sudo chmod +x quicklab.sh
+sudo chmod +x abhi.sh
 
-./quicklab.sh
+./abhi.sh
 ```
