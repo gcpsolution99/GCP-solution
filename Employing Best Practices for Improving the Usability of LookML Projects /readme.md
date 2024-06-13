@@ -2,7 +2,7 @@
 
 ## 1. Turn on Development Mode
 
-## 2. Open and command in order_items.view
+## 2. Open and replace command in order_items.view
 ```
 view: order_items {
   sql_table_name: `cloud-training-demos.looker_ecomm.order_items`
@@ -170,7 +170,7 @@ view: order_items {
 }
 ```
 
-## 3. Open and command in users.view
+## 3. Open and replace command in users.view
 ```
 view: users {
   sql_table_name: `cloud-training-demos.looker_ecomm.users`
@@ -273,7 +273,7 @@ view: users {
 }
 ```
 
-## 4. Open and command in training_ecommerce.model
+## 4. Open and replace command in training_ecommerce.model
 ```
 connection: "bigquery_public_data_looker"
 
