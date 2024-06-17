@@ -13,6 +13,6 @@ gsutil cp demo-image2.png gs://$DEVSHELL_PROJECT_ID
 
 gsutil cp demo-image1%20-%20Copy.png gs://$DEVSHELL_PROJECT_ID-abhi
 
-curl -LO https://github.com/gcpsolution99/GCP-solution/blob/main/APIs%20Explorer%20Cloud%20Storage/demo-image1%20-%20Copy.png
-curl -LO https://github.com/gcpsolution99/GCP-solution/blob/main/APIs%20Explorer%20Cloud%20Storage/demo-image1.png
-curl -LO https://github.com/gcpsolution99/GCP-solution/blob/main/APIs%20Explorer%20Cloud%20Storage/demo-image2.png
+curl -LO raw.githubusercontent.com/gcpsolution99/GCP-solution/main/APIs%20Explorer%20Cloud%20Storage/demo-image1%20-%20Copy.png
+curl -LO raw.githubusercontent.com/gcpsolution99/GCP-solution/main/APIs%20Explorer%20Cloud%20Storage/demo-image1.png
+curl -LO raw.githubusercontent.com/gcpsolution99/GCP-solution/main/APIs%20Explorer%20Cloud%20Storage/demo-image2.png
