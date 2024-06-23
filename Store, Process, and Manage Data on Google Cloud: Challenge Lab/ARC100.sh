@@ -1,45 +1,73 @@
-gcloud auth list
+BLACK=`tput setaf 0`
+RED=`tput setaf 1`
+GREEN=`tput setaf 2`
+YELLOW=`tput setaf 3`
+BLUE=`tput setaf 4`
+MAGENTA=`tput setaf 5`
+CYAN=`tput setaf 6`
+WHITE=`tput setaf 7`
 
-export PROJECT_ID=$(gcloud config get-value project)
+BG_BLACK=`tput setab 0`
+BG_RED=`tput setab 1`
+BG_GREEN=`tput setab 2`
+BG_YELLOW=`tput setab 3`
+BG_BLUE=`tput setab 4`
+BG_MAGENTA=`tput setab 5`
+BG_CYAN=`tput setab 6`
+BG_WHITE=`tput setab 7`
+
+BOLD=`tput bold`
+RESET=`tput sgr0`
+
+echo "${YELLOW}${BOLD}Starting${RESET}" "${GREEN}${BOLD}Execution${RESET}"
 
 gcloud config set compute/region $REGION
 
-gcloud services enable artifactregistry.googleapis.com cloudfunctions.googleapis.com cloudbuild.googleapis.com eventarc.googleapis.com run.googleapis.com logging.googleapis.com pubsub.googleapis.com
+export PROJECT_ID=$(gcloud config get-value project)
 
-sleep 15
+gcloud services enable \
+  artifactregistry.googleapis.com \
+  cloudfunctions.googleapis.com \
+  cloudbuild.googleapis.com \
+  eventarc.googleapis.com \
+  run.googleapis.com \
+  logging.googleapis.com \
+  pubsub.googleapis.com
 
 gsutil mb -l $REGION gs://$BUCKET
 
-gcloud pubsub topics create $TOPIC_ID
-
+gcloud pubsub topics create $TOPIC
 
 PROJECT_NUMBER=$(gcloud projects list --filter="project_id:$PROJECT_ID" --format='value(project_number)')
+
 SERVICE_ACCOUNT=$(gsutil kms serviceaccount -p $PROJECT_NUMBER)
 
-gcloud projects add-iam-policy-binding $PROJECT_ID --member serviceAccount:$SERVICE_ACCOUNT --role roles/pubsub.publisher
+gcloud projects add-iam-policy-binding $PROJECT_ID \
+  --member serviceAccount:$SERVICE_ACCOUNT \
+  --role roles/pubsub.publisher
   
-
-mkdir ~/abhi && cd $_
+mkdir ~/lol && cd $_
 touch index.js && touch package.json
 
-
-cat > index.js <<'EOF_CP'
-/* globals exports, require */
-//jshint strict: false
-//jshint esversion: 6
-"use strict";
+cat > index.js <<'EOF_END'
+const functions = require('@google-cloud/functions-framework');
 const crc32 = require("fast-crc32c");
 const { Storage } = require('@google-cloud/storage');
 const gcs = new Storage();
 const { PubSub } = require('@google-cloud/pubsub');
 const imagemagick = require("imagemagick-stream");
 
-exports.thumbnail = (event, context) => {
+functions.cloudEvent('memories-thumbnail-maker', cloudEvent => {
+  const event = cloudEvent.data;
+
+  console.log(`Event: ${event}`);
+  console.log(`Hello ${event.bucket}`);
+
   const fileName = event.name;
   const bucketName = event.bucket;
   const size = "64x64"
   const bucket = gcs.bucket(bucketName);
-  const topicName = "REPLACE_WITH_YOUR_TOPIC ID";
+  const topicName = "";
   const pubsub = new PubSub();
   if ( fileName.search("64x64_thumbnail") == -1 ){
     // doesn't have a thumbnail, get the filename extension
@@ -89,69 +117,65 @@ exports.thumbnail = (event, context) => {
   else {
     console.log(`gs://${bucketName}/${fileName} already has a thumbnail`);
   }
-};
-EOF_CP
+});
 
+EOF_END
 
+sed -i "8c\functions.cloudEvent('$FUNCTION', cloudEvent => {" index.js
 
-sed -i '16c\  const topicName = "'$TOPIC_ID'";' index.js
+sed -i "18c\  const topicName = '$TOPIC';" index.js
 
-
-
-cat > package.json <<EOF_CP
+cat > package.json <<EOF_END
 {
-  "name": "thumbnails",
-  "version": "1.0.0",
-  "description": "Create Thumbnail of uploaded image",
-  "scripts": {
-    "start": "node index.js"
-  },
-  "dependencies": {
-    "@google-cloud/pubsub": "^2.0.0",
-    "@google-cloud/storage": "^5.0.0",
-    "fast-crc32c": "1.0.4",
-    "imagemagick-stream": "4.1.1"
-  },
-  "devDependencies": {},
-  "engines": {
-    "node": ">=4.3.2"
+    "name": "thumbnails",
+    "version": "1.0.0",
+    "description": "Create Thumbnail of uploaded image",
+    "scripts": {
+      "start": "node index.js"
+    },
+    "dependencies": {
+      "@google-cloud/functions-framework": "^3.0.0",
+      "@google-cloud/pubsub": "^2.0.0",
+      "@google-cloud/storage": "^5.0.0",
+      "fast-crc32c": "1.0.4",
+      "imagemagick-stream": "4.1.1"
+    },
+    "devDependencies": {},
+    "engines": {
+      "node": ">=4.3.2"
+    }
   }
-}
-EOF_CP
+EOF_END
 
-
-
-
-#!/bin/bash
-
-  
 deploy_function () {
-  gcloud functions deploy $FUNCTION_NAME \
+gcloud functions deploy $FUNCTION \
   --gen2 \
   --runtime nodejs20 \
-  --entry-point thumbnail \
+  --entry-point $FUNCTION \
   --source . \
   --region $REGION \
   --trigger-bucket $BUCKET \
   --trigger-location $REGION \
-  --max-instances 5 \
-  --allow-unauthenticated --quiet
+  --max-instances 1 \
+  --quiet
 }
-  
-deploy_success=false
 
-while [ "$deploy_success" = false ]; do
-  if deploy_function; then
-    echo "Function deployed successfully abhi"
-    deploy_success=true
+SERVICE_NAME="$FUNCTION"
+
+while true; do
+  deploy_function
+
+  if gcloud run services describe $SERVICE_NAME --region $REGION &> /dev/null; then
+    echo "Cloud Run service is created. Exiting the loop."
+    break
   else
-    echo "abhi"
+    echo "Waiting for Cloud Run service to be created..."
     sleep 10
   fi
 done
 
+wget https://storage.googleapis.com/cloud-training/gsp315/map.jpg 
 
+gsutil cp map.jpg gs://$BUCKET
 
-wget https://storage.googleapis.com/cloud-training/arc102/wildlife.jpg
-
-gsutil cp wildlife.jpg gs://$BUCKET
+echo "${RED}${BOLD}Congratulations${RESET}" "${WHITE}${BOLD}for${RESET}" "${GREEN}${BOLD}Completing the Lab !!!${RESET}"
