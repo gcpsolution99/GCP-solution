@@ -22,3 +22,4 @@ FROM
 WHERE
  gender = 'M'
 ORDER BY count DESC LIMIT 5;
+"
