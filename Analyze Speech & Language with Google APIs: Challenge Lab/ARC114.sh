@@ -8,12 +8,8 @@ cat > nl_request.json <<EOF_CP
 }
 EOF_CP
 
-
-
 curl "https://language.googleapis.com/v1/documents:analyzeEntities?key=${API_KEY}" \
   -s -X POST -H "Content-Type: application/json" --data-binary @nl_request.json > nl_response.json
-
-
 
 cat > speech_request.json <<EOF_CP
 {
@@ -27,12 +23,8 @@ cat > speech_request.json <<EOF_CP
 }
 EOF_CP
 
-
-
 curl -s -X POST -H "Content-Type: application/json" --data-binary @speech_request.json \
 "https://speech.googleapis.com/v1/speech:recognize?key=${API_KEY}" > speech_response.json
-
-
 
 cat > sentiment_analysis.py <<EOF_CP
 
@@ -86,7 +78,6 @@ if __name__ == "__main__":
     analyze(args.movie_review_filename)
 
 EOF_CP
-
 
 gsutil cp gs://cloud-samples-tests/natural-language/sentiment-samples.tgz .
 
