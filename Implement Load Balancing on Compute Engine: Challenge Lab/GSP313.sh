@@ -16,7 +16,7 @@ EOF
  
 gcloud compute instance-templates create web-server-template \
         --metadata-from-file startup-script=startup.sh \
-        --machine-type g1-small \
+        --machine-type e2-medium \
         --region $REGION
  
 gcloud compute instance-groups managed create web-server-group \
