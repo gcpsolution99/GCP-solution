@@ -6,6 +6,9 @@
 export IP=
 ```
 ```
+export ZONE=
+```
+```
 curl -LO raw.githubusercontent.com/gcpsolution99/GCP-solution/main/GSP/GSP041.sh
 sudo chmod +x GSP041.sh
 ./GSP041.sh
