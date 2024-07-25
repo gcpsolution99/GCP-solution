@@ -15,9 +15,3 @@ gcloud compute instances attach-disk my-instance \
     --zone=$ZONE
 gcloud compute ssh my-instance --zone=$ZONE --quiet
 
-
-sleep 5
-
-sudo apt update
-sudo apt install nginx -y
-sudo systemctl start nginx
