@@ -2,6 +2,7 @@
 
 ## Run in CloudShell and follow video:
 
+## For Task 1
 ```
 export BUCKET_NAME=
 ```
