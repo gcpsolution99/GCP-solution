@@ -6,7 +6,7 @@
 export IP=
 ```
 ```
-curl -LO raw.githubusercontent.com/gcpsolution99/GCP-solution/main/Internal%20Load%20Balancer/GSP041.sh
+curl -LO raw.githubusercontent.com/gcpsolution99/GCP-solution/main/GSP/GSP041.sh
 sudo chmod +x GSP041.sh
 ./GSP041.sh
 ```
