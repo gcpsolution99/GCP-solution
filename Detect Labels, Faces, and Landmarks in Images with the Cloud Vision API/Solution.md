@@ -3,9 +3,6 @@
 ## Run in CloudShell and follow video:
 
 ```
-export ZONE=
-```
-```
 curl -LO raw.githubusercontent.com/gcpsolution99/GCP-solution/main/GSP/GSP037.sh
 sudo chmod +x GSP037.sh
 ./GSP037.sh
