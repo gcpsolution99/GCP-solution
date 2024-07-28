@@ -1,6 +1,6 @@
 gcloud services enable pubsublite.googleapis.com
 
-sleep 20
+sleep 30
 
 pip3 install --upgrade google-cloud-pubsublite
 
