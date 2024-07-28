@@ -1,3 +1,9 @@
+export REGION="${ZONE%-*}"
+
+gcloud config set compute/zone $ZONE
+
+gcloud config set compute/region $REGION
+
 gcloud services enable compute.googleapis.com
 
 gsutil mb gs://fancy-store-$DEVSHELL_PROJECT_ID
@@ -9,7 +15,6 @@ cd ~/monolith-to-microservices
 ./setup.sh
 
 nvm install --lts
-
 
 cd monolith-to-microservices/
 
@@ -59,7 +64,6 @@ cd ~
 rm -rf monolith-to-microservices/*/node_modules
 gsutil -m cp -r monolith-to-microservices gs://fancy-store-$DEVSHELL_PROJECT_ID/
 
-
 gcloud compute instances create backend \
     --zone=$ZONE \
     --machine-type=e2-standard-2 \
@@ -79,7 +83,6 @@ EOF
 
 cd ~
 
-
 cd ~/monolith-to-microservices/react-app
 npm install && npm run-script build
 
@@ -93,7 +96,6 @@ gcloud compute instances create frontend \
     --machine-type=e2-standard-2 \
     --tags=frontend \
     --metadata=startup-script-url=https://storage.googleapis.com/fancy-store-$DEVSHELL_PROJECT_ID/startup-script.sh
-
 
 gcloud compute firewall-rules create fw-fe \
     --allow tcp:8080 \
@@ -132,7 +134,6 @@ gcloud compute instance-groups managed create fancy-be-mig \
     --base-instance-name fancy-be \
     --size 2 \
     --template fancy-be
-
 
 gcloud compute instance-groups set-named-ports fancy-fe-mig \
     --zone=$ZONE \
