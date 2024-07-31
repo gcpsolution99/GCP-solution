@@ -10,4 +10,9 @@ sudo chmod +x GSP192.sh
 ./GSP192.sh
 ```
 
+
+## Note: Run task 4 command from lab if you are not getting score on task 4 and wait for some time
+<img width="368" alt="image" src="https://github.com/user-attachments/assets/1442563b-c6ac-4f72-b4d7-829882313f69">
+
+
 ## Congratulations !!
