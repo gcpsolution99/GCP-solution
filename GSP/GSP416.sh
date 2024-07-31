@@ -151,4 +151,4 @@ echo "${GREEN}${BOLD}
 
 Task 9 Completed
 
-Lab Completed !!!  Subscribe to Abhi Arcade Solution
+${RESET}"
