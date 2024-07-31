@@ -14,4 +14,6 @@ sudo chmod +x ARC106.sh
 ./ARC106.sh
 ```
 
+## Note: Run all command again if you are not getting score or if dataflow job not running.
+
 ## Congratulations !!
