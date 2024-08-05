@@ -19,7 +19,7 @@ export PROJECT_ID=$(gcloud info --format='value(config.project)')
 #----------------------------------------------------code--------------------------------------------------#
 
 gcloud sql instances create myinstance \
-  --root-password=quicklab \
+  --root-password=abhi \
   --database-version=MYSQL_8_0 \
   --tier=db-n1-standard-4 \
   --region="${ZONE%-*}"
@@ -42,11 +42,11 @@ Lab Completed !!!
 ${RESET}"
 
 #-----------------------------------------------------end----------------------------------------------------------#
-read -p "${BOLD}${RED}Subscribe to Quicklab [y/n] : ${RESET}" CONSENT_REMOVE
+read -p "${BOLD}${RED}abhi : ${RESET}" CONSENT_REMOVE
 
 while [ "$CONSENT_REMOVE" != 'y' ]; do
   sleep 10
-  read -p "${BOLD}${YELLOW}Do Subscribe to Quicklab [y/n] : ${RESET}" CONSENT_REMOVE
+  read -p "${BOLD}${YELLOW}abhi : ${RESET}" CONSENT_REMOVE
 done
 
 echo "${BLUE}${BOLD}Thanks For Subscribing :)${RESET}"
