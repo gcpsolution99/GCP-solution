@@ -4,6 +4,8 @@ git clone https://github.com/GoogleCloudPlatform/training-data-analyst
 
 cd ~/training-data-analyst/courses/developingapps/python/cloudstorage/start
 
+sed -i s/us-central/$REGION/g prepare_environment.sh
+
 . prepare_environment.sh
 
 gsutil mb gs://$DEVSHELL_PROJECT_ID-media
@@ -55,7 +57,6 @@ EOF_END
 
 cd quiz/webapp/
 
-
 cat > questions.py <<EOF_END
 # TODO: Import the storage module
 from quiz.gcp import storage, datastore
@@ -99,9 +100,7 @@ def save_question(data, image_file):
     datastore.save_question(data)
     return
 
-
 EOF_END
-
 
 cd ~/training-data-analyst/courses/developingapps/python/cloudstorage/start
 
