@@ -1,8 +1,8 @@
 ZONE="$(gcloud compute instances list --project=$DEVSHELL_PROJECT_ID --format='value(ZONE)' | head -n 1)"
 
 echo "export CONTAINER_NAME=$CONTAINER_NAME" > env_vars.sh
-echo "export TASK_3_FILE_NAME=$TASK_3_FILE_NAME" >> env_vars.sh
-echo "export TASK_4_FILE_NAME=$TASK_4_FILE_NAME" >> env_vars.sh
+echo "export TASK3_FILENAME=$TASK3_FILENAME" >> env_vars.sh
+echo "export TASK4_FILENAME=$TASK4_FILENAME" >> env_vars.sh
 
 
 source env_vars.sh
@@ -46,13 +46,13 @@ pip install absl-py
 pip install numpy 
 pip install requests
 
-python3 ./prediction_script.py --input_image_file=./IMG_07703.png  --port=8602 --output_result_file=${TASK_3_FILE_NAME}
+python3 ./prediction_script.py --input_image_file=./IMG_07703.png  --port=8602 --output_result_file=${TASK3_FILENAME}
 
 # Task 4
 export PROJECT_ID=$(gcloud config get-value core/project)
 gsutil cp gs://${PROJECT_ID}/cosmetic-test-data/IMG_0769.png .
 
-python3 ./prediction_script.py --input_image_file=./IMG_0769.png  --port=8602 --output_result_file=${TASK_4_FILE_NAME}
+python3 ./prediction_script.py --input_image_file=./IMG_0769.png  --port=8602 --output_result_file=${TASK4_FILENAME}
 EOF_END
 
 gcloud compute scp env_vars.sh lab-vm:/tmp --project=$DEVSHELL_PROJECT_ID --zone=$ZONE --quiet
