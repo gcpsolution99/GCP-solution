@@ -16,7 +16,7 @@ sudo chmod +x GSP747_task1.sh
 ./GSP747_task1.sh
 ```
 
-## Note: Check score for Task 1 & when you got score then go ahead for 2nd task command
+## Note: Check score for Task 1 once you got score then go ahead for 2nd task command
 
 ### Task 2:
 
