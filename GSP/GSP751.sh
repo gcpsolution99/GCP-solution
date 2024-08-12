@@ -313,7 +313,7 @@ terraform apply --auto-approve
 
 cd ~
 
-curl https://raw.githubusercontent.com/QUICK-GCP-LAB/2-Minutes-Labs-Solutions/main/Interact%20with%20Terraform%20Modules/index.html > index.html
-curl https://raw.githubusercontent.com/QUICK-GCP-LAB/2-Minutes-Labs-Solutions/main/Interact%20with%20Terraform%20Modules/error.html > error.html
+curl https://raw.githubusercontent.com/hashicorp/learn-terraform-modules/master/modules/aws-s3-static-website-bucket/www/index.html > index.html
+curl https://raw.githubusercontent.com/hashicorp/learn-terraform-modules/blob/master/modules/aws-s3-static-website-bucket/www/error.html > error.html
 
 gsutil cp *.html gs://$DEVSHELL_PROJECT_ID
