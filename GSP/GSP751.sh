@@ -1,30 +1,13 @@
+gcloud auth list 
 git clone https://github.com/terraform-google-modules/terraform-google-network
-
 cd terraform-google-network
-
 git checkout tags/v6.0.1 -b v6.0.1
 
 gcloud config list --format 'value(core.project)'
 
-cd ~/terraform-google-network/examples/simple_project
+cd examples/simple_project
 
 cat > variables.tf <<EOF_END
-/**
- * Copyright 2019 Google LLC
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 variable "project_id" {
   description = "The project ID to host the network in"
   default     = "$DEVSHELL_PROJECT_ID"
@@ -37,29 +20,6 @@ variable "network_name" {
 EOF_END
 
 cat > main.tf <<EOF_END
-/**
- * Copyright 2019 Google LLC
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
-# Whenever a new major version of the network module is released, the
-# version constraint below should be updated, e.g. to ~> 4.0.
-#
-# If that new version includes provider updates, validation of this
-# example may fail until that is done.
-
-# [START vpc_custom_create]
 module "test-vpc-module" {
   source       = "terraform-google-modules/network/google"
   version      = "~> 6.0"
@@ -95,28 +55,22 @@ module "test-vpc-module" {
 # [END vpc_custom_create]
 EOF_END
 
-cat > outputs.tf <<EOF_END
-output "bucket-name" {
-  description = "Bucket names."
-  value       = "module.gcs-static-website-bucket.bucket"
-}
-EOF_END
-
 terraform init
 
 terraform apply --auto-approve
 
 terraform destroy --auto-approve
 
-cd ~
 rm -rd terraform-google-network -f
 
-touch main.tf
 
+#task 2
+
+cd ~
+touch main.tf
 mkdir -p modules/gcs-static-website-bucket
 
 cd modules/gcs-static-website-bucket
-
 touch website.tf variables.tf outputs.tf
 
 tee -a README.md <<EOF
@@ -135,6 +89,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 EOF
+
 
 cat > website.tf <<EOF_END
 resource "google_storage_bucket" "bucket" {
@@ -179,6 +134,7 @@ resource "google_storage_bucket" "bucket" {
   }
 }
 EOF_END
+
 
 cat > variables.tf <<EOF_END
 variable "name" {
@@ -260,6 +216,8 @@ variable "lifecycle_rules" {
 }
 EOF_END
 
+
+
 cat > outputs.tf <<EOF_END
 output "bucket" {
   description = "The created storage bucket"
@@ -287,12 +245,14 @@ module "gcs-static-website-bucket" {
 }
 EOF_END
 
+
 cat > outputs.tf <<EOF_END
 output "bucket-name" {
   description = "Bucket names."
   value       = "module.gcs-static-website-bucket.bucket"
 }
 EOF_END
+
 
 cat > variables.tf <<EOF_END
 variable "project_id" {
@@ -312,7 +272,6 @@ terraform init
 terraform apply --auto-approve
 
 cd ~
-
 curl https://raw.githubusercontent.com/hashicorp/learn-terraform-modules/master/modules/aws-s3-static-website-bucket/www/index.html > index.html
 curl https://raw.githubusercontent.com/hashicorp/learn-terraform-modules/blob/master/modules/aws-s3-static-website-bucket/www/error.html > error.html
 
