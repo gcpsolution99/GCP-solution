@@ -12,4 +12,6 @@ sudo chmod +x GSP080.sh
 ./GSP080.sh
 ```
 
+## For 2nd task follow video:
+
 ## Congratulations !!
