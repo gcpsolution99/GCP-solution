@@ -1,6 +1,3 @@
-export REGION=
-
-
 PROJECT_ID=$(gcloud config get-value project)
 
 gcloud services enable \
