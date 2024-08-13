@@ -3,7 +3,7 @@
 ## Run in CloudShell and follow video:
 
 ```
-export REGION=
+export ZONE=
 ```
 
 ```
