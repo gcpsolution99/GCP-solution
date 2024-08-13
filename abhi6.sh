@@ -1,363 +1,325 @@
 PROJECT_ID=$(gcloud config get-value project)
+ REGION="${ZONE%-*}"
 
-gcloud services enable \
+
+ gcloud services enable \
   artifactregistry.googleapis.com \
   cloudfunctions.googleapis.com \
   cloudbuild.googleapis.com \
   eventarc.googleapis.com \
   run.googleapis.com \
   logging.googleapis.com \
-  storage.googleapis.com \
-  pubsub.googleapis.com
-
-sleep 60
-
-mkdir ~/abhi && cd $_
-
-cat > index.js <<EOF_END
-const functions = require('@google-cloud/functions-framework');
-
-functions.http('convertTemp', (req, res) => {
-  var dirn = req.query.convert;
-  var ctemp = (req.query.temp - 32) * 5/9;
-  var target_unit = 'Celsius';
-
-  if (req.query.temp === undefined) {
-    res.status(400);
-    res.send('Temperature value not supplied in request.');
-  }
-
-  if (dirn === undefined)
-    dirn = process.env.TEMP_CONVERT_TO;
-
-  if (dirn === 'ctof') {
-    ctemp = (req.query.temp * 9/5) + 32;
-    target_unit = 'Fahrenheit';
-  }
-
-  res.send("Temperature in " + target_unit + " is: " + ctemp.toFixed(2) + ".");
-});
-
-EOF_END
-
-cat > package.json <<EOF_END
-{
-  "dependencies": {
-    "@google-cloud/functions-framework": "^3.0.0"
-  }
-}
-EOF_END
-
-# Function to check if the function exists
-function function_exists() {
-  gcloud functions describe temperature-converter --region $REGION --format="value(state)" > /dev/null 2>&1
-}
-
-# Function to check if the function is active
-function check_function_active() {
-  gcloud functions describe temperature-converter --region $REGION --format="value(state)" | grep "ACTIVE" > /dev/null
-}
-
-# Function to check if the function failed
-function check_function_failed() {
-  gcloud functions describe temperature-converter --region $REGION --format="value(state)" | grep "FAILED" > /dev/null
-}
-
-# Function to deploy the function
-function deploy_function() {
-  gcloud functions deploy temperature-converter \
-    --gen2 \
-    --runtime nodejs20 \
-    --entry-point convertTemp \
-    --source . \
-    --region $REGION \
-    --trigger-http \
-    --timeout 600s \
-    --max-instances 1 \
-    --no-allow-unauthenticated \
-    --quiet || { echo "Function deployment failed. Exiting."; exit 1; }
-}
-
-# Function to delete the function
-function delete_function() {
-  gcloud functions delete temperature-converter --region $REGION --quiet || { echo "Function deletion failed. Exiting."; exit 1; }
-}
-
-# Check if the function exists and is active
-if ! function_exists; then
-  echo "Function does not exist. Creating..."
-  deploy_function
-  # Wait for the function to become active or fail
-  while ! check_function_active && ! check_function_failed; do
-    echo "Function not yet active or failed. Rechecking in 10 seconds..."
-    sleep 10
-  done
-  if check_function_failed; then
-    echo "Function deployment failed. Retrying..."
-    delete_function
-    deploy_function
-  fi
-elif ! check_function_active; then
-  echo "Function not in ACTIVE status. Deleting and recreating..."
-  delete_function
-  deploy_function
-  # Wait for the function to become active or fail
-  while ! check_function_active && ! check_function_failed; do
-    echo "Function not yet active or failed. Rechecking in 10 seconds..."
-    sleep 10
-  done
-  if check_function_failed; then
-    echo "Function deployment failed. Exiting."
-    exit 1
-  fi
-else
-  echo "Function is already running and active. Continuing..."
-fi
-
-# Function is now active, proceed with next command
-echo "Function is active. Proceeding with next command."
-
-# Your actual command here
+  pubsub.googleapis.com \
+  redis.googleapis.com \
+  vpcaccess.googleapis.com
 
 
-sleep 10
+sleep 30
 
-FUNCTION_URI=$(gcloud functions describe temperature-converter --gen2 --region $REGION --format "value(serviceConfig.uri)"); echo $FUNCTION_URI
+REDIS_INSTANCE=customerdb
 
-curl -H "Authorization: bearer $(gcloud auth print-identity-token)" "${FUNCTION_URI}?temp=70"
+gcloud redis instances create $REDIS_INSTANCE \
+ --size=2 --region=$REGION \
+ --redis-version=redis_6_x
 
-curl -H "Authorization: bearer $(gcloud auth print-identity-token)" "${FUNCTION_URI}?temp=21.11&convert=ctof"
+gcloud redis instances describe $REDIS_INSTANCE --region=$REGION
 
+REDIS_IP=$(gcloud redis instances describe $REDIS_INSTANCE --region=$REGION --format="value(host)"); echo $REDIS_IP
 
-PROJECT_NUMBER=$(gcloud projects list \
-    --filter="project_id:$PROJECT_ID" \
-    --format='value(project_number)')
-
-SERVICE_ACCOUNT=$(gsutil kms serviceaccount -p $PROJECT_NUMBER)
-
-gcloud projects add-iam-policy-binding $PROJECT_ID --member serviceAccount:$SERVICE_ACCOUNT --role roles/pubsub.publisher
-
-gsutil cp gs://cloud-training/CBL491/data/average-temps.csv .
-
-mkdir ~/temp-data-checker && cd $_
-
-touch index.js && touch package.json
+REDIS_PORT=$(gcloud redis instances describe $REDIS_INSTANCE --region=$REGION --format="value(port)"); echo $REDIS_PORT
 
 
-cat > index.js <<EOF_END
-const functions = require('@google-cloud/functions-framework');
+gcloud compute networks vpc-access connectors create test-connector \
+--region=$REGION \
+--network=default \
+--range=10.8.0.0/28 \
+--min-instances=2 \
+--max-instances=10 \
+--machine-type=e2-micro
 
-// Register a CloudEvent callback with the Functions Framework that will
-// be triggered by Cloud Storage events.
-functions.cloudEvent('checkTempData', cloudEvent => {
-  console.log('Event ID: ' + cloudEvent.id);
-  console.log('Event Type: ' + cloudEvent.type);
+gcloud compute networks vpc-access connectors \
+  describe test-connector \
+  --region $REGION
 
-  const file = cloudEvent.data;
-  console.log('Bucket: ' + file.bucket);
-  console.log('File: ' + file.name);
-  console.log('Created: ' + file.timeCreated);
-});
+TOPIC=add_redis
+
+gcloud pubsub topics create $TOPIC
+
+mkdir ~/redis-pubsub && cd $_
+touch main.py && touch requirements.txt
+
+cat > main.py <<'EOF_END'
+import os
+import base64
+import json
+import redis
+import functions_framework
+
+redis_host = os.environ.get('REDISHOST', 'localhost')
+redis_port = int(os.environ.get('REDISPORT', 6379))
+redis_client = redis.StrictRedis(host=redis_host, port=redis_port)
+
+# Triggered from a message on a Pub/Sub topic.
+@functions_framework.cloud_event
+def addToRedis(cloud_event):
+    # The Pub/Sub message data is stored as a base64-encoded string in the cloud_event.data property
+    # The expected value should be a JSON string.
+    json_data_str = base64.b64decode(cloud_event.data["message"]["data"]).decode()
+    json_payload = json.loads(json_data_str)
+    response_data = ""
+    if json_payload and 'id' in json_payload:
+        id = json_payload['id']
+        data = redis_client.set(id, json_data_str)
+        response_data = redis_client.get(id)
+        print(f"Added data to Redis: {response_data}")
+    else:
+        print("Message is invalid, or missing an 'id' attribute")
 EOF_END
 
 
-
-cat > package.json <<EOF_END
-{
-    "name": "temperature-data-checker",
-    "version": "0.0.1",
-    "main": "index.js",
-    "dependencies": {
-      "@google-cloud/functions-framework": "^2.1.0"
-    }
-  }
+cat > requirements.txt <<EOF_END
+functions-framework==3.2.0
+redis==4.3.4
 EOF_END
 
-BUCKET="gs://gcf-temperature-data-$PROJECT_ID"
+gcloud functions deploy python-pubsub-function \
+ --runtime=python310 \
+ --region=$REGION \
+ --source=. \
+ --entry-point=addToRedis \
+ --trigger-topic=$TOPIC \
+ --vpc-connector projects/$PROJECT_ID/locations/$REGION/connectors/test-connector \
+ --set-env-vars REDISHOST=$REDIS_IP,REDISPORT=$REDIS_PORT
 
 
-gsutil mb -l $REGION $BUCKET
+gcloud pubsub topics publish $TOPIC --message='{"id": 1234, "firstName": "Lucas" ,"lastName": "Sherman", "Phone": "555-555-5555"}'
 
-# Function to check if the function exists
-function function_exists() {
-  gcloud functions describe temperature-data-checker --region $REGION > /dev/null 2>&1
-}
 
-# Function to deploy the function
-function deploy_function() {
-  gcloud functions deploy temperature-data-checker \
-    --gen2 \
-    --runtime nodejs16 \
-    --entry-point checkTempData \
-    --source . \
-    --region $REGION \
-    --trigger-bucket $BUCKET \
-    --trigger-location $REGION \
-    --max-instances 1 \
-    --quiet
-}
+mkdir ~/redis-http && cd $_
+touch main.py && touch requirements.txt
 
-# Loop until the function exists
-while ! function_exists; do
-  echo "Function not found. Deploying..."
 
-  deploy_function
-  sleep 10  # You can adjust the sleep duration as needed
-done
 
-# Continue with the next code after the function is created
-echo "Function created. Continuing with the next code."
-# Add your next code here
 
-sleep 10
+cat > main.py <<'EOF_END'
+import os
+import redis
+from flask import request
+import functions_framework
+
+redis_host = os.environ.get('REDISHOST', 'localhost')
+redis_port = int(os.environ.get('REDISPORT', 6379))
+redis_client = redis.StrictRedis(host=redis_host, port=redis_port)
+
+@functions_framework.http
+def getFromRedis(request):
+    response_data = ""
+    if request.method == 'GET':
+        id = request.args.get('id')
+        try:
+            response_data = redis_client.get(id)
+        except RuntimeError:
+            response_data = ""
+        if response_data is None:
+            response_data = ""
+    return response_data
+EOF_END
+
+
+cat > requirements.txt <<EOF_END
+functions-framework==3.2.0
+redis==4.3.4
+EOF_END
+
+
+gcloud functions deploy http-get-redis \
+--gen2 \
+--runtime python310 \
+--entry-point getFromRedis \
+--source . \
+--region $REGION \
+--trigger-http \
+--timeout 600s \
+--max-instances 1 \
+--vpc-connector projects/$PROJECT_ID/locations/$REGION/connectors/test-connector \
+--set-env-vars REDISHOST=$REDIS_IP,REDISPORT=$REDIS_PORT \
+--no-allow-unauthenticated
+
+
+FUNCTION_URI=$(gcloud functions describe http-get-redis --gen2 --region $REGION --format "value(serviceConfig.uri)"); echo $FUNCTION_URI
+
+curl -H "Authorization: bearer $(gcloud auth print-identity-token)" "${FUNCTION_URI}?id=1234"
+
+
+gcloud storage cp gs://cloud-training/CBL492/startup.sh .
+
+cat startup.sh
+
+gcloud compute instances create webserver-vm \
+--image-project=debian-cloud \
+--image-family=debian-11 \
+--metadata-from-file=startup-script=./startup.sh \
+--machine-type e2-standard-2 \
+--tags=http-server \
+--scopes=https://www.googleapis.com/auth/cloud-platform \
+--zone $ZONE
+
+gcloud compute --project=$PROJECT_ID \
+ firewall-rules create default-allow-http \
+ --direction=INGRESS \
+ --priority=1000 \
+ --network=default \
+ --action=ALLOW \
+ --rules=tcp:80 \
+ --source-ranges=0.0.0.0/0 \
+ --target-tags=http-server
+
+sleep 20
+
+
+ VM_INT_IP=$(gcloud compute instances describe webserver-vm --format='get(networkInterfaces[0].networkIP)' --zone $ZONE); echo $VM_INT_IP
+
+VM_EXT_IP=$(gcloud compute instances describe webserver-vm --format='get(networkInterfaces[0].accessConfigs[0].natIP)' --zone $ZONE); echo $VM_EXT_IP
+
+
+
+mkdir ~/vm-http && cd $_
+touch main.py && touch requirements.txt
+
+
+cat > main.py <<'EOF_END'
+import functions_framework
+import requests
+
+@functions_framework.http
+def connectVM(request):
+    resp_text = ""
+    if request.method == 'GET':
+        ip = request.args.get('ip')
+        try:
+            response_data = requests.get(f"http://{ip}")
+            resp_text = response_data.text
+        except RuntimeError:
+            print ("Error while connecting to VM")
+    return resp_text
+EOF_END
+
+
+# Save the requirements to requirements.txt
+cat > requirements.txt <<EOF_END
+functions-framework==3.2.0
+Werkzeug==2.3.7
+flask==2.1.3
+requests==2.28.1
+EOF_END
+
+
+
+gcloud functions deploy vm-connector \
+ --runtime python310 \
+ --entry-point connectVM \
+ --source . \
+ --region $REGION \
+ --trigger-http \
+ --timeout 10s \
+ --max-instances 1 \
+ --no-allow-unauthenticated
+
+
+ FUNCTION_URI=$(gcloud functions describe vm-connector --region $REGION --format='value(httpsTrigger.url)'); echo $FUNCTION_URI
+
+ curl -H "Authorization: bearer $(gcloud auth print-identity-token)" "${FUNCTION_URI}?ip=$VM_EXT_IP"
+
+ curl -H "Authorization: bearer $(gcloud auth print-identity-token)" "${FUNCTION_URI}?ip=$VM_INT_IP"
+
+gcloud services disable cloudfunctions.googleapis.com
+gcloud services enable cloudfunctions.googleapis.com
+
+sleep 30
 
 cd ~
-gsutil cp gs://cloud-training/CBL491/data/average-temps.csv .
-gsutil cp ~/average-temps.csv $BUCKET/average-temps.csv
+cd vm-http
 
- gcloud functions logs read temperature-data-checker \
- --region $REGION --gen2 --limit=100 --format "value(log)"
+PROJECT_NUMBER=$(gcloud projects describe $DEVSHELL_PROJECT_ID --format='value(projectNumber)')
+
+# Your existing deployment command
+deploy_function() {
+gcloud functions deploy vm-connector \
+ --runtime python310 \
+ --entry-point connectVM \
+ --source . \
+ --region $REGION \
+ --trigger-http \
+ --timeout 10s \
+ --max-instances 1 \
+ --no-allow-unauthenticated \
+ --vpc-connector projects/$PROJECT_ID/locations/$REGION/connectors/test-connector \
+ --service-account=$PROJECT_NUMBER-compute@developer.gserviceaccount.com 
+}
+
+# Variables
+SERVICE_NAME="vm-connector"
+
+# Loop until the Cloud Function is deployed
+while true; do
+  # Run the deployment command
+  deploy_function
+
+  # Check if Cloud Function is deployed
+  if gcloud functions describe $SERVICE_NAME --region $REGION &> /dev/null; then
+    echo "Cloud Function is deployed. Exiting the loop."
+    break
+  else
+    echo "Waiting for Cloud Function to be deployed..."
+  
+    sleep 10
+  fi
+done
+
+
+curl -H "Authorization: bearer $(gcloud auth print-identity-token)" "${FUNCTION_URI}?ip=$VM_INT_IP"
 
 
 
- mkdir ~/temp-data-converter && cd $_
 
- cat > index.js <<EOF
- const functions = require('@google-cloud/functions-framework');
- 
- functions.http('convertTemp', (req, res) => {
-   var dirn = req.query.convert;
-   var temp = req.query.temp;
- 
-   if (temp === undefined || isNaN(temp)) {
-     res.status(400);
-     res.send('Invalid or missing temperature value in the request.');
-     return;
-   }
- 
-   var ctemp = (temp - 32) * 5 / 9;
-   var target_unit = 'Celsius';
- 
-   if (dirn === undefined) {
-     dirn = process.env.TEMP_CONVERT_TO;
-   }
- 
-   if (dirn === 'ctof') {
-     ctemp = (temp * 9 / 5) + 32;
-     target_unit = 'Fahrenheit';
-   }
- 
-   res.send(\`Temperature in \${target_unit} is: \${ctemp.toFixed(2)}.\`);
- });
- EOF
- 
- 
- 
-cat > package.json <<EOF_END
- {
-    "name": "temperature-converter",
-    "version": "0.0.1",
-    "main": "index.js",
-    "scripts": {
-      "unit-test": "mocha tests/unit*test.js --timeout=6000 --exit",
-      "test": "npm -- run unit-test"
-    },
-    "devDependencies": {
-      "mocha": "^9.0.0",
-      "sinon": "^14.0.0"
-    },
-    "dependencies": {
-      "@google-cloud/functions-framework": "^2.1.0"
-    }
-  }
+cd ~
+cd redis-pubsub/
+TOPIC=add_redis
 
-EOF_END
+gcloud pubsub topics publish $TOPIC --message='{"id": 1234, "firstName": "Lucas" ,"lastName": "Sherman", "Phone": "555-555-5555"}'
  
 
-mkdir tests && touch tests/unit.http.test.js
+
+# Your existing deployment command
+deploy_function() {
+gcloud functions deploy python-pubsub-function \
+ --runtime=python310 \
+ --region=$REGION \
+ --source=. \
+ --entry-point=addToRedis \
+ --trigger-topic=$TOPIC \
+ --vpc-connector projects/$PROJECT_ID/locations/$REGION/connectors/test-connector \
+ --set-env-vars REDISHOST=$REDIS_IP,REDISPORT=$REDIS_PORT
+}
+
+# Variables
+SERVICE_NAME="python-pubsub-function"
+
+# Loop until the Cloud Function is deployed
+while true; do
+  # Run the deployment command
+  deploy_function
+
+  # Check if Cloud Function is deployed
+  if gcloud functions describe $SERVICE_NAME --region $REGION &> /dev/null; then
+    echo "Cloud Function is deployed. Exiting the loop."
+    break
+  else
+    echo "Waiting for Cloud Function to be deployed..."
+    
+    sleep 10
+  fi
+done
 
 
-cat > tests/unit.http.test.js <<EOF
-const {getFunction} = require('@google-cloud/functions-framework/testing');
-
-describe('functions_convert_temperature_http', () => {
-  // Sinon is a testing framework that is used to create mocks for Node.js applications written in Express.
-  // Express is Node.js web application framework used to implement HTTP functions.
-  const sinon = require('sinon');
-  const assert = require('assert');
-  require('../');
-
-  const getMocks = () => {
-    const req = {body: {}, query: {}};
-
-    return {
-      req: req,
-      res: {
-        send: sinon.stub().returnsThis(),
-        status: sinon.stub().returnsThis()
-      },
-    };
-  };
-
-  let envOrig;
-  before(() => {
-    envOrig = JSON.stringify(process.env);
-  });
-
-  after(() => {
-    process.env = JSON.parse(envOrig);
-  });
-
-  it('convertTemp: should convert a Fahrenheit temp value by default', () => {
-    const mocks = getMocks();
-    mocks.req.query = {temp: 70};
-
-    const convertTemp = getFunction('convertTemp');
-    convertTemp(mocks.req, mocks.res);
-    assert.strictEqual(mocks.res.send.calledOnceWith('Temperature in Celsius is: 21.11.'), true);
-  });
-
-  it('convertTemp: should convert a Celsius temp value', () => {
-    const mocks = getMocks();
-    mocks.req.query = {temp: 21.11, convert: 'ctof'};
-
-    const convertTemp = getFunction('convertTemp');
-    convertTemp(mocks.req, mocks.res);
-    assert.strictEqual(mocks.res.send.calledOnceWith('Temperature in Fahrenheit is: 70.00.'), true);
-  });
-
-  it('convertTemp: should convert a Celsius temp value by default', () => {
-    process.env.TEMP_CONVERT_TO = 'ctof';
-    const mocks = getMocks();
-    mocks.req.query = {temp: 21.11};
-
-    const convertTemp = getFunction('convertTemp');
-    convertTemp(mocks.req, mocks.res);
-    assert.strictEqual(mocks.res.send.calledOnceWith('Temperature in Fahrenheit is: 70.00.'), true);
-  });
-
-  it('convertTemp: should return an error message', () => {
-    const mocks = getMocks();
-
-    const convertTemp = getFunction('convertTemp');
-    convertTemp(mocks.req, mocks.res);
-
-    assert.strictEqual(mocks.res.status.calledOnce, true);
-    assert.strictEqual(mocks.res.status.firstCall.args[0], 400);
-  });
-});
-EOF
-
-
-
-npm install
-
-npm test
-
-
-gcloud run deploy temperature-converter \
---image=$REGION-docker.pkg.dev/$PROJECT_ID/gcf-artifacts/temperature--converter:version_1 \
---set-env-vars=TEMP_CONVERT_TO=ctof \
---region=$REGION \
---project=$PROJECT_ID \
- && gcloud run services update-traffic temperature-converter --to-latest --region=$REGION
+ gcloud pubsub topics publish $TOPIC --message='{"id": 1234, "firstName": "Lucas" ,"lastName": "Sherman", "Phone": "555-555-5555"}'
