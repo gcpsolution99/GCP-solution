@@ -1,6 +1,6 @@
 # Please like share & subscribe to [Abhi arcade solution](http://www.youtube.com/@Abhi_Arcade_Solution)
 
-## Run in CloudShell and follow video:
+## Run in SSH and follow video:
 
 ```
 export API_KEY=
