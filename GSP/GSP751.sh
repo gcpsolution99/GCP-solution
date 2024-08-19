@@ -1,3 +1,4 @@
+export REGION=
 gcloud auth list 
 git clone https://github.com/terraform-google-modules/terraform-google-network
 cd terraform-google-network
@@ -7,7 +8,7 @@ gcloud config list --format 'value(core.project)'
 
 cd examples/simple_project
 
-cat > variables.tf <<EOF_END
+cat > variables.tf <<EOF_CP
 variable "project_id" {
   description = "The project ID to host the network in"
   default     = "$DEVSHELL_PROJECT_ID"
@@ -17,9 +18,9 @@ variable "network_name" {
   description = "The name of the VPC network being created"
   default     = "example-vpc"
 }
-EOF_END
+EOF_CP
 
-cat > main.tf <<EOF_END
+cat > main.tf <<EOF_CP
 module "test-vpc-module" {
   source       = "terraform-google-modules/network/google"
   version      = "~> 6.0"
@@ -53,7 +54,7 @@ module "test-vpc-module" {
   ]
 }
 # [END vpc_custom_create]
-EOF_END
+EOF_CP
 
 terraform init
 
@@ -64,7 +65,8 @@ terraform destroy --auto-approve
 rm -rd terraform-google-network -f
 
 
-#task 2
+
+
 
 cd ~
 touch main.tf
@@ -73,7 +75,7 @@ mkdir -p modules/gcs-static-website-bucket
 cd modules/gcs-static-website-bucket
 touch website.tf variables.tf outputs.tf
 
-tee -a README.md <<EOF
+tee -a README.md <<EOF_CP
 # GCS static website bucket
 This module provisions Cloud Storage buckets configured for static website hosting.
 EOF
@@ -88,10 +90,10 @@ distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
-EOF
+EOF_CP
 
 
-cat > website.tf <<EOF_END
+cat > website.tf <<EOF_CP
 resource "google_storage_bucket" "bucket" {
   name               = var.name
   project            = var.project_id
@@ -133,10 +135,10 @@ resource "google_storage_bucket" "bucket" {
     }
   }
 }
-EOF_END
+EOF_CP
 
 
-cat > variables.tf <<EOF_END
+cat > variables.tf <<'EOF_CP'
 variable "name" {
   description = "The name of the bucket."
   type        = string
@@ -214,20 +216,20 @@ variable "lifecycle_rules" {
   }))
   default = []
 }
-EOF_END
+EOF_CP
 
 
 
-cat > outputs.tf <<EOF_END
+cat > outputs.tf <<EOF_CP
 output "bucket" {
   description = "The created storage bucket"
   value       = google_storage_bucket.bucket
 }
-EOF_END
+EOF_CP
 
 cd ~
 
-cat > main.tf <<EOF_END
+cat > main.tf <<'EOF_CP'
 module "gcs-static-website-bucket" {
   source = "./modules/gcs-static-website-bucket"
   name       = var.name
@@ -243,18 +245,18 @@ module "gcs-static-website-bucket" {
     }
   }]
 }
-EOF_END
+EOF_CP
 
 
-cat > outputs.tf <<EOF_END
+cat > outputs.tf <<EOF_CP
 output "bucket-name" {
   description = "Bucket names."
   value       = "module.gcs-static-website-bucket.bucket"
 }
-EOF_END
+EOF_CP
 
 
-cat > variables.tf <<EOF_END
+cat > variables.tf <<EOF_CP
 variable "project_id" {
   description = "The ID of the project in which to provision resources."
   type        = string
@@ -265,13 +267,15 @@ variable "name" {
   type        = string
   default     = "$DEVSHELL_PROJECT_ID"
 }
-EOF_END
+EOF_CP
 
 terraform init
 
 terraform apply --auto-approve
 
+
 cd ~
+gsutil mb gs://$DEVSHELL_PROJECT_ID
 curl https://raw.githubusercontent.com/hashicorp/learn-terraform-modules/master/modules/aws-s3-static-website-bucket/www/index.html > index.html
 curl https://raw.githubusercontent.com/hashicorp/learn-terraform-modules/blob/master/modules/aws-s3-static-website-bucket/www/error.html > error.html
 
