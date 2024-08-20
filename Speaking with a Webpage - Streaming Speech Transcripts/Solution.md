@@ -21,6 +21,7 @@ sudo chmod +x GSP125Task2.sh
 
 ./GSP125Task2.sh
 ```
+## Note: Check my progress till task 3 once you got score then only run below command.
 
 ### Task 3: Run below Command in 1st tab of cloudshell
 
