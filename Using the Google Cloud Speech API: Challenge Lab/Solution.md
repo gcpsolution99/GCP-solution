@@ -1,6 +1,6 @@
 # Please like share & subscribe to [Abhi arcade solution](http://www.youtube.com/@Abhi_Arcade_Solution)
 
-### Task 1: Create an API key -- Follow Video
+### Task 1: Create an API key --> Follow Video
 
 ### Task 2: Run the following Commands in SSH
 ```
