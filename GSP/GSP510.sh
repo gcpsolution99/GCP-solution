@@ -1,6 +1,6 @@
 gcloud config set compute/zone $ZONE
 
-gcloud container clusters create $CLUSTER_NAME \
+gcloud container clusters create $cluster \
 --release-channel regular \
 --cluster-version latest \
 --num-nodes 3 \
@@ -8,9 +8,9 @@ gcloud container clusters create $CLUSTER_NAME \
 --max-nodes 6 \
 --enable-autoscaling --no-enable-ip-alias
 
-gcloud container clusters update $CLUSTER_NAME --enable-managed-prometheus --zone $ZONE
+gcloud container clusters update $cluster --enable-managed-prometheus --zone $ZONE
   
-kubectl create ns $NAMESPACE
+kubectl create ns $namespace
   
 gsutil cp gs://spls/gsp510/prometheus-app.yaml .
  
@@ -48,7 +48,7 @@ spec:
 EOF
 
  
-kubectl -n $NAMESPACE apply -f prometheus-app.yaml
+kubectl -n $namespace apply -f prometheus-app.yaml
   
 gsutil cp gs://spls/gsp510/pod-monitoring.yaml .
  
@@ -66,19 +66,19 @@ spec:
       app: prometheus-test
   endpoints:
   - port: metrics
-    interval: $INTERVAL
+    interval: $interval
 EOF
 
   
-kubectl -n $NAMESPACE apply -f pod-monitoring.yaml
+kubectl -n $namespace apply -f pod-monitoring.yaml
   
 gsutil cp -r gs://spls/gsp510/hello-app/ .
   
 export PROJECT_ID=$(gcloud config get-value project)
 export REGION="${ZONE%-*}"
 cd ~/hello-app
-gcloud container clusters get-credentials $CLUSTER_NAME --zone $ZONE
-kubectl -n $NAMESPACE apply -f manifests/helloweb-deployment.yaml
+gcloud container clusters get-credentials $cluster --zone $ZONE
+kubectl -n $namespace apply -f manifests/helloweb-deployment.yaml
 
 cd manifests/
 
@@ -115,8 +115,8 @@ EOF
  
 cd ..
 
-kubectl delete deployments helloweb  -n $NAMESPACE
-kubectl -n $NAMESPACE apply -f manifests/helloweb-deployment.yaml
+kubectl delete deployments helloweb  -n $namespace
+kubectl -n $namespace apply -f manifests/helloweb-deployment.yaml
 
 cat > main.go <<EOF
 package main
@@ -163,17 +163,17 @@ export REGION="${ZONE%-*}"
 cd ~/hello-app/
 
 gcloud auth configure-docker $REGION-docker.pkg.dev --quiet
-docker build -t $REGION-docker.pkg.dev/$PROJECT_ID/$REPO_NAME/hello-app:v2 .
+docker build -t $REGION-docker.pkg.dev/$PROJECT_ID/$repo/hello-app:v2 .
  
-docker push $REGION-docker.pkg.dev/$PROJECT_ID/$REPO_NAME/hello-app:v2
+docker push $REGION-docker.pkg.dev/$PROJECT_ID/$repo/hello-app:v2
   
-kubectl set image deployment/helloweb -n $NAMESPACE hello-app=$REGION-docker.pkg.dev/$PROJECT_ID/$REPO_NAME/hello-app:v2
+kubectl set image deployment/helloweb -n $namespace hello-app=$REGION-docker.pkg.dev/$PROJECT_ID/$repo/hello-app:v2
   
-kubectl expose deployment helloweb -n $NAMESPACE --name=$SERVICE_NAME --type=LoadBalancer --port 8080 --target-port 8080
+kubectl expose deployment helloweb -n $namespace --name=$service --type=LoadBalancer --port 8080 --target-port 8080
  
 cd ..
 
-kubectl -n $NAMESPACE apply -f pod-monitoring.yaml
+kubectl -n $namespace apply -f pod-monitoring.yaml
 
 gcloud logging metrics create pod-image-errors \
   --description="awesome lab" \
