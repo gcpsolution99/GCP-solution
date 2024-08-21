@@ -1,11 +1,131 @@
-read -p "Enter the CP Form number (1, 2, or 3): " form_number
-
-cp_form_1() {
 bq mk austin
 
 bq --location=US mk --dataset bq_dataset
 
 export EVALUATION_YEAR=2019
+
+
+
+bq query --use_legacy_sql=false "
+CREATE OR REPLACE MODEL austin.location_model
+OPTIONS
+(model_type='linear_reg', labels=['duration_minutes']) AS
+SELECT
+  start_station_name,
+  EXTRACT(HOUR FROM start_time) AS start_hour,
+  EXTRACT(DAYOFWEEK FROM start_time) AS day_of_week,
+  duration_minutes,
+  address as location
+FROM
+  \`bigquery-public-data.austin_bikeshare.bikeshare_trips\` AS trips
+JOIN
+  \`bigquery-public-data.austin_bikeshare.bikeshare_stations\` AS stations
+ON
+  trips.start_station_name = stations.name
+WHERE
+  EXTRACT(YEAR FROM start_time) = $EVALUATION_YEAR
+  AND duration_minutes > 0
+"
+
+
+bq query --use_legacy_sql=false "
+CREATE OR REPLACE MODEL austin.subscriber_model
+OPTIONS
+(model_type='linear_reg', labels=['duration_minutes']) AS
+SELECT
+  start_station_name,
+  EXTRACT(HOUR FROM start_time) AS start_hour,
+  subscriber_type,
+  duration_minutes
+FROM
+  \`bigquery-public-data.austin_bikeshare.bikeshare_trips\` AS trips
+WHERE
+  EXTRACT(YEAR FROM start_time) = $EVALUATION_YEAR
+"
+
+
+
+bq query --use_legacy_sql=false "
+SELECT
+  SQRT(mean_squared_error) AS rmse,
+  mean_absolute_error
+FROM
+  ML.EVALUATE(MODEL austin.location_model, (
+  SELECT
+    start_station_name,
+    EXTRACT(HOUR FROM start_time) AS start_hour,
+    EXTRACT(DAYOFWEEK FROM start_time) AS day_of_week,
+    duration_minutes,
+    address as location
+  FROM
+    \`bigquery-public-data.austin_bikeshare.bikeshare_trips\` AS trips
+  JOIN
+    \`bigquery-public-data.austin_bikeshare.bikeshare_stations\` AS stations
+  ON
+    trips.start_station_name = stations.name
+  WHERE
+    EXTRACT(YEAR FROM start_time) = $EVALUATION_YEAR)
+)"
+
+
+
+bq query --use_legacy_sql=false "
+SELECT
+  SQRT(mean_squared_error) AS rmse,
+  mean_absolute_error
+FROM
+  ML.EVALUATE(MODEL austin.subscriber_model, (
+  SELECT
+    start_station_name,
+    EXTRACT(HOUR FROM start_time) AS start_hour,
+    subscriber_type,
+    duration_minutes
+  FROM
+    \`bigquery-public-data.austin_bikeshare.bikeshare_trips\` AS trips
+  WHERE
+    EXTRACT(YEAR FROM start_time) = $EVALUATION_YEAR)
+)"
+
+
+
+
+bq query --use_legacy_sql=false "
+SELECT
+  start_station_name,
+  COUNT(*) AS trips
+FROM
+  \`bigquery-public-data.austin_bikeshare.bikeshare_trips\`
+WHERE
+  EXTRACT(YEAR FROM start_time) = $EVALUATION_YEAR
+GROUP BY
+  start_station_name
+ORDER BY
+  trips DESC
+"
+
+
+
+
+bq query --use_legacy_sql=false "
+SELECT
+  AVG(predicted_duration_minutes) AS average_predicted_trip_length
+FROM
+  ML.PREDICT(MODEL austin.subscriber_model, (
+  SELECT
+    start_station_name,
+    EXTRACT(HOUR FROM start_time) AS start_hour,
+    subscriber_type,
+    duration_minutes
+  FROM
+    \`bigquery-public-data.austin_bikeshare.bikeshare_trips\`
+  WHERE
+    EXTRACT(YEAR FROM start_time) = $EVALUATION_YEAR
+    AND subscriber_type = 'Single Trip'
+    AND start_station_name = '21st & Speedway @PCL'
+))"
+
+
+
 
 bq query --use_legacy_sql=false "
 CREATE OR REPLACE MODEL austin.austin_location_model
@@ -30,6 +150,9 @@ WHERE
   AND duration_minutes > 0;
 "
 
+
+
+
 bq query --use_legacy_sql=false "
 SELECT
   SQRT(mean_squared_error) AS rmse,
@@ -52,6 +175,8 @@ FROM
 )"
 
 
+
+
 bq query --use_legacy_sql=false "
 SELECT
   SQRT(mean_squared_error) AS rmse,
@@ -72,6 +197,8 @@ FROM
     trips.start_station_name = stations.name
   WHERE EXTRACT(YEAR FROM start_time) = $EVALUATION_YEAR)
 )"
+
+
 
 
 bq query --use_legacy_sql=false "
@@ -122,12 +249,10 @@ WHERE
   EXTRACT(YEAR FROM start_time) = $EVALUATION_YEAR
   AND subscriber_type = 'Single Trip'
   AND start_station_name = '21st & Speedway @PCL'))"
-}
 
 
-# Form 2
 
-cp_form_2() {
+
 bq query --use_legacy_sql=false \
 "
 CREATE OR REPLACE MODEL \`ecommerce.customer_classification_model\`
@@ -163,6 +288,7 @@ USING (fullVisitorId)
 "
 
 
+
 bq query --use_legacy_sql=false \
 "
 #standardSQL
@@ -180,6 +306,7 @@ WHERE
   _TABLE_SUFFIX BETWEEN '20160801' AND '20170631'
 LIMIT 100000;
 "
+
 
 
 
@@ -250,13 +377,11 @@ GROUP BY fullVisitorId
 ORDER BY total_predicted_purchases DESC
 LIMIT 10;
 "
-}
 
 
 
 
-# form 3
-cp_form_3() {
+
 bq --location=US mk --dataset bq_dataset
 
 
@@ -279,6 +404,7 @@ WHERE
 
 
 
+
 bq query --use_legacy_sql=false \
 "
 #standardSQL
@@ -297,6 +423,7 @@ FROM
 WHERE
   _TABLE_SUFFIX BETWEEN '20170701' AND '20170801'));
 "
+
 
 
 
@@ -325,6 +452,7 @@ LIMIT 10;
 
 
 
+
 bq query --use_legacy_sql=false \
 "
 #standardSQL
@@ -347,39 +475,3 @@ GROUP BY fullVisitorId
 ORDER BY total_predicted_purchases DESC
 LIMIT 10;
 "
-
-bq query --use_legacy_sql=false \
-"
-#standardSQL
-SELECT
-  *
-FROM
-  ml.EVALUATE(MODEL \`bqml_dataset.predicts_visitor_model\`, (
-SELECT
-  IF(totals.transactions IS NULL, 0, 1) AS label,
-  IFNULL(device.operatingSystem, '') AS os,
-  device.isMobile AS is_mobile,
-  IFNULL(geoNetwork.country, '') AS country,
-  IFNULL(totals.pageviews, 0) AS pageviews
-FROM
-  \`bigquery-public-data.google_analytics_sample.ga_sessions_*\`
-WHERE
-  _TABLE_SUFFIX BETWEEN '20170701' AND '20170801'));
-"
-
-}
-
-
-
-# Run the function based on the selected form number
-case $form_number in
-    1) 
-        cp_form_1 || cp_form_2 ;;
-    2) 
-        cp_form_2 || cp_form_3 ;;
-    3) 
-        cp_form_3 ;;
-    *) 
-        echo "CP Invalid form number. Please enter 1, 2, or 3." ;;
-esac
-
