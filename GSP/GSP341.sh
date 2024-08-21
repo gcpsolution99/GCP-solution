@@ -1,3 +1,5 @@
+read -p "Enter the CP Form number (1, 2, or 3): " form_number
+
 cp_form_1() {
 bq mk austin
 
@@ -366,4 +368,18 @@ WHERE
 "
 
 }
+
+
+
+# Run the function based on the selected form number
+case $form_number in
+    1) 
+        cp_form_1 || cp_form_2 ;;
+    2) 
+        cp_form_2 || cp_form_3 ;;
+    3) 
+        cp_form_3 ;;
+    *) 
+        echo "CP Invalid form number. Please enter 1, 2, or 3." ;;
+esac
 
