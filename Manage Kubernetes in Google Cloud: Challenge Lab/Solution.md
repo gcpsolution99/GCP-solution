@@ -3,12 +3,12 @@
 ## Run in CloudShell and follow video:
 
 ```
-export REPO_NAME=
-export CLUSTER_NAME=
+export repo=
+export cluster=
 export ZONE=
-export NAMESPACE=
-export INTERVAL=
-export SERVICE_NAME=
+export namespace=
+export interval=
+export service=
 ```
 
 ```
