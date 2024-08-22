@@ -12,6 +12,4 @@ sudo chmod +x GSP729.sh
 ./GSP729.sh
 ```
 
-## Task 4: We have to do it manually
-
 ## Congratulations !!
