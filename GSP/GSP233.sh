@@ -1,9 +1,4 @@
-gcloud auth list
-
-gcloud config set compute/zone $ZONE
-
-export REGION=${ZONE%-*}
-gcloud config set compute/region $REGION
+export REGION="${ZONE%-*}"
 
 gsutil -m cp -r gs://spls/gsp233/* .
 
