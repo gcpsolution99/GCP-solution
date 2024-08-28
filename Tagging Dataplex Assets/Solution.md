@@ -7,9 +7,9 @@ export REGION=
 ```
 
 ```
-curl -LO raw.githubusercontent.com/gcpsolution99/GCP-solution/main/GSP/GSP067.sh
-sudo chmod +x GSP067.sh
-./GSP067.sh
+curl -LO raw.githubusercontent.com/gcpsolution99/GCP-solution/main/GSP/GSP1145.sh
+sudo chmod +x GSP1145.sh
+./GSP1145.sh
 ```
 
 ## Congratulations !!
