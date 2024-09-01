@@ -1,7 +1,3 @@
-
-
-
-
 gcloud sql instances create postgresql-db \
 --database-version=POSTGRES_14 \
 --zone=$ZONE \
