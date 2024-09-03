@@ -5,8 +5,6 @@
 ```
 export REGION=
 ```
-### Enter y
-
 ```
 curl -LO raw.githubusercontent.com/gcpsolution99/GCP-solution/main/GSP/GSP102.sh
 
