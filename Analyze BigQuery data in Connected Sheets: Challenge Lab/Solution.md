@@ -10,7 +10,7 @@ Formula for task 2:-
 Formula for task 5:-
 
 ```
-=COUNTIF(tlc_yellow_trips_2022!airport_fee, "1")
+=IF(fare_amount>0,tip_amount/fare_amount*100,0)
 ```
 
 
