@@ -66,9 +66,3 @@ gcloud compute instances create lab-3 --machine-type=e2-standard-2 --service-acc
 ```
 
 ## Congratulations !!
-
-#### *Well done!*
-
-#### Don't Forget to Join the [Telegram Channel](https://t.me/quickgcplab) & [Discussion group](https://t.me/quickgcplabchats)
-
-# [QUICK GCP LAB](https://www.youtube.com/@quickgcplab)
