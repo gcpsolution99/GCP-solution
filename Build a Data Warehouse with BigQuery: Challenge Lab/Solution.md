@@ -10,4 +10,16 @@ sudo chmod +x GSP340.sh
 ```
 
 
+# NOTE:
+
+--->> Run Below command only if you're not getting score on task 1:
+
+```
+curl -LO raw.githubusercontent.com/gcpsolution99/GCP-solution/main/GSP340Task1.sh
+
+sudo chmod +x GSP340Task1.sh
+
+./GSP340Task1.sh
+```
+
 ## Congratulations !!
