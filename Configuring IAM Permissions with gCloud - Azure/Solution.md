@@ -31,7 +31,9 @@ gcloud config set compute/zone $ZONE_2
 gcloud init --no-launch-browser
 ```
 
-### Select option 2 --> Enter user2 -- Select 1st project
+### Select option 2 --> Enter user2 -- configure 2nd project
+
+### Select 1st project & run below command
 
 ```
 curl -LO raw.githubusercontent.com/gcpsolution99/GCP-solution/main/GSP/GSP1119.sh
