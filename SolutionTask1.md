@@ -3,11 +3,11 @@
 ## Run in CloudShell and follow video:
 
 ```
-curl -LO raw.githubusercontent.com/gcpsolution99/GCP-solution/main/abhi3.sh
+curl -LO raw.githubusercontent.com/gcpsolution99/GCP-solution/main/GSP340Task1.sh
 
-sudo chmod +x abhi3.sh
+sudo chmod +x GSP340Task1.sh
 
-./abhi3.sh
+./GSP340Task1.sh
 ```
 
 ## Congratulations !!
