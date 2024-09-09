@@ -2,6 +2,7 @@
 
 ## Run in SSH and follow video:
 
+## Login with user 1
 ```
 export ZONE_1=
 export ZONE_2=
