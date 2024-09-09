@@ -6,13 +6,13 @@
 > ***Run Commands in cloud shell:***
 
 ```
-export ZONE1=
+export REGION_1=
 ```
 ```
-export ZONE2=
+export REGION_2=
 ```
 ```
-export ZONE3=
+export REGION_3=
 ```
 ```
 curl -LO https://raw.githubusercontent.com/gcpsolution99/GCP-solution/main/GSP016.sh
