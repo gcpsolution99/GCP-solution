@@ -1,5 +1,3 @@
-export PROJECT_ID=$(gcloud info --format='value(config.project)')
-
 bq query --use_legacy_sql=false \
 "
 #standardSQL
@@ -9,6 +7,7 @@ COUNT(DISTINCT fullVisitorId) AS visitor_count
 FROM \`data-to-insights.ecommerce.rev_transactions\`
 GROUP BY hits_page_pageTitle
 "
+
 
 bq query --use_legacy_sql=false \
 "
@@ -21,6 +20,12 @@ WHERE hits_page_pageTitle = 'Checkout Confirmation'
 GROUP BY hits_page_pageTitle
 "
 
+echo "${GREEN}${BOLD}
+
+
+${RESET}"
+
+
 bq query --use_legacy_sql=false \
 "
 #standardSQL
@@ -32,6 +37,8 @@ FROM
 \`data-to-insights.ecommerce.rev_transactions\`
 GROUP BY geoNetwork_city
 "
+
+
 
 bq query --use_legacy_sql=false \
 "
@@ -74,6 +81,12 @@ GROUP BY geoNetwork_city
 HAVING avg_products_ordered > 20
 ORDER BY avg_products_ordered DESC
 "
+
+echo "${GREEN}${BOLD}
+
+Task 4 Completed
+
+${RESET}"
 
 bq query --use_legacy_sql=false \
 "
