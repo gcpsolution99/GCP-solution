@@ -10,7 +10,7 @@ npm install @google-cloud/firestore
 
 npm install @google-cloud/logging
 
-curl https://raw.githubusercontent.com/gcpsolution99/GCP-solution/main/importTestData.js > importTestData.js
+curl https://raw.githubusercontent.com/gcpsolution99/GCP-solution/main/Importing%20Data%20to%20a%20Firestore%20Database/importTestData.js > importTestData.js
 
 npm install faker@5.5.3
 
