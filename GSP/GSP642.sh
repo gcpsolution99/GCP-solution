@@ -14,7 +14,7 @@ curl https://raw.githubusercontent.com/gcpsolution99/GCP-solution/main/importTes
 
 npm install faker@5.5.3
 
-curl https://raw.githubusercontent.com/gcpsolution99/GCP-solution/main/createTestData.js > createTestData.js
+curl https://raw.githubusercontent.com/gcpsolution99/GCP-solution/main/Importing%20Data%20to%20a%20Firestore%20Database/createTestData.js > createTestData.js
 
 node createTestData 1000
 
