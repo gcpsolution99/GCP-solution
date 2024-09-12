@@ -1,6 +1,3 @@
-echo "Started"
-
-
 gcloud services enable cloudbuild.googleapis.com cloudfunctions.googleapis.com run.googleapis.com logging.googleapis.com storage-component.googleapis.com aiplatform.googleapis.com
 
 cat > ~/gemini-app/requirements.txt <<EOF
@@ -559,5 +556,3 @@ streamlit run app.py \
 --server.enableCORS=false \
 --server.enableXsrfProtection=false \
 --server.port 8080
-
-echo "Subscribe to abhi arcade solution"
