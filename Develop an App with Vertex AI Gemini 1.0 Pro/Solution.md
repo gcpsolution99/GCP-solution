@@ -12,10 +12,7 @@ export REGION=
 PROJECT_ID=$(gcloud config get-value project)
 echo "PROJECT_ID=${PROJECT_ID}"
 echo "REGION=${REGION}"
-gcloud services enable cloudbuild.googleapis.com
-cloudfunctions.googleapis.com run.googleapis.com
-logging.googleapis.com storage-component.googleapis.com
-aiplatform.googleapis.com
+gcloud services enable cloudbuild.googleapis.com cloudfunctions.googleapis.com run.googleapis.com logging.googleapis.com storage-component.googleapis.com aiplatform.googleapis.com
 
 sleep 10
 
