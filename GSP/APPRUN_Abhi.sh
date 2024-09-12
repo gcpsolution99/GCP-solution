@@ -6,16 +6,16 @@ gcloud services enable run.googleapis.com
 
 sleep 20
 
-gcloud config set compute/region $REGION
+gcloud config set compute/LOCATION $LOCATION
 
  gcloud run deploy store-service \
   --image gcr.io/qwiklabs-resources/gsp724-store-service \
-  --region $REGION \
+  --LOCATION $LOCATION \
   --allow-unauthenticated
 
  gcloud run deploy order-service \
   --image gcr.io/qwiklabs-resources/gsp724-order-service \
-  --region $REGION \
+  --LOCATION $LOCATION \
   --no-allow-unauthenticated
 
 
@@ -28,7 +28,7 @@ gcloud iam service-accounts list --filter="Order Initiator"
 
 sleep 20
 
- gcloud run services add-iam-policy-binding order-service --region $REGION \
+ gcloud run services add-iam-policy-binding order-service --LOCATION $LOCATION \
   --member=serviceAccount:pubsub-cloud-run-invoker@$GOOGLE_CLOUD_PROJECT.iam.gserviceaccount.com \
   --role=roles/run.invoker --platform managed
 
@@ -40,7 +40,7 @@ sleep 20
 
 
  ORDER_SERVICE_URL=$(gcloud run services describe order-service \
-   --region $REGION \
+   --LOCATION $LOCATION \
    --format="value(status.address.url)")
 
 
