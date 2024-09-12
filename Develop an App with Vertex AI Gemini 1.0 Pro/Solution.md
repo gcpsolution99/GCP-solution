@@ -9,9 +9,20 @@ export REGION=
 ## Command 1:
 
 ```
-curl -LO raw.githubusercontent.com/gcpsolution99/GCP-solution/main/GSP/Gemini1.sh
-sudo chmod +x Gemini1.sh
-./Gemini1.sh
+PROJECT_ID=$(gcloud config get-value project)
+echo "PROJECT_ID=${PROJECT_ID}"
+echo "REGION=${REGION}"
+gcloud services enable cloudbuild.googleapis.com
+cloudfunctions.googleapis.com run.googleapis.com
+logging.googleapis.com storage-component.googleapis.com
+aiplatform.googleapis.com
+
+sleep 10
+
+mkdir ~/gemini-app
+cd ~/gemini-app
+python3 -m venv gemini-streamlit
+source gemini-streamlit/bin/activate
 ```
 ## Command 2:
 ```
