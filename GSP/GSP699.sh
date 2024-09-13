@@ -1,3 +1,5 @@
+echo "*** Execution Started ***"
+
 gcloud auth list
 
 gcloud config set compute/zone $ZONE 
@@ -124,4 +126,4 @@ kubectl create deployment frontend --image=gcr.io/${GOOGLE_CLOUD_PROJECT}/fronte
 kubectl expose deployment frontend --type=LoadBalancer --port 80 --target-port 8080
 
 
-echo "***************** Congratulations Lab completed **************"
+echo "Congratulations, Lab Completed"
