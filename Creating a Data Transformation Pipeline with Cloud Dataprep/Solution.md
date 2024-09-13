@@ -12,9 +12,13 @@ sudo chmod +x GSP430.sh
 ./GSP430.sh
 ```
 
-## Step 2:
+## Step 2: Navigate to Dataprep
 
-## Step 3:
+## Step 3: Download below file & follow video
+
+Zip File: [flow_Ecommerce_Analytics_Pipeline.zip](https://github.com/user-attachments/files/16992442/flow_Ecommerce_Analytics_Pipeline.zip)
+
+
 
 ## Congratulations !!
 
