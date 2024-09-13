@@ -2,8 +2,8 @@ echo "*** Execution Started ***"
 
 gcloud auth list
 
-gcloud config set compute/zone $ZONE 
-export REGION=${ZONE%-*}
+gcloud config set compute/zone $zone 
+export REGION=${zone%-*}
 gcloud config set compute/region $REGION
 
 export PROJECT_ID=$DEVSHELL_PROJECT_ID
@@ -16,7 +16,7 @@ cd ~/monolith-to-microservices
 
 gcloud services enable container.googleapis.com --project=$DEVSHELL_PROJECT_ID
 
-gcloud container clusters create fancy-cluster --project=$DEVSHELL_PROJECT_ID --zone=$ZONE --num-nodes 3 --machine-type=e2-standard-4
+gcloud container clusters create fancy-cluster --project=$DEVSHELL_PROJECT_ID --zone=$zone --num-nodes 3 --machine-type=e2-standard-4
 
 gcloud compute instances list
 
