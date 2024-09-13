@@ -3,17 +3,14 @@
 ## Run in CloudShell and follow video:
 
 ```
-export ZONE=
+export zone=
 ```
-
-
 ```
-curl -LO raw.githubusercontent.com/gcpsolution99/GCP-solution/main/GSP/GSP699.sh
+curl -LO raw.githubusercontent.com/gcpsolution99/GCP-solution/refs/heads/main/GSP/GSP699.sh
 
 sudo chmod +x GSP699.sh
 
 ./GSP699.sh
 ```
-
 
 ## Congratulations !!
