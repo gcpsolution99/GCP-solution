@@ -36,7 +36,7 @@ sudo chmod +x ARC134_Task2.sh
 ./ARC134_Task2.sh
 ```
 
-## Command 3: 
+## Command 3 - Run in SSH: 
 
 ```
 curl -LO raw.githubusercontent.com/gcpsolution99/GCP-solution/refs/heads/main/ARC/ARC134_Task3.sh
