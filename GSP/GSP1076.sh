@@ -2,7 +2,7 @@ echo "*** Execution Started ***"
 
 export PROJECT_ID=$(gcloud config get-value project)
 export PROJECT_NUMBER=$(gcloud projects describe $PROJECT_ID --format='value(projectNumber)')
-export REGION="${ZONE%-*}"
+export REGION="${zone%-*}"
 gcloud config set compute/region $REGION
 
 gcloud services enable \
@@ -18,7 +18,7 @@ git clone https://github.com/GoogleCloudPlatform/cloud-code-samples/
 cd ~/cloud-code-samples
 
 
-gcloud container clusters create container-dev-cluster --zone=$ZONE
+gcloud container clusters create container-dev-cluster --zone=$zone
 
 
 gcloud artifacts repositories create container-dev-repo --repository-format=docker \
