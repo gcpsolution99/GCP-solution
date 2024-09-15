@@ -6,7 +6,7 @@ gcloud config configurations activate default
 
 gcloud config configurations activate user2
 
-echo "export PROJECTID2=$SECOND_PROJECT_ID" >> ~/.bashrc
+echo "export PROJECTID2=$Project_ID_2" >> ~/.bashrc
 
 . ~/.bashrc
 gcloud config set project $PROJECTID2
@@ -16,7 +16,7 @@ gcloud config configurations activate default
 sudo yum -y install epel-release
 sudo yum -y install jq
 
-echo "export USERID2=$SECOND_USER_NAME" >> ~/.bashrc
+echo "export USERID2=$Username_2" >> ~/.bashrc
 
 . ~/.bashrc
 gcloud projects add-iam-policy-binding $PROJECTID2 --member user:$USERID2 --role=roles/viewer
