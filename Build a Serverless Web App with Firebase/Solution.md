@@ -1,6 +1,6 @@
 # Please like share & subscribe to [Abhi arcade solution](http://www.youtube.com/@Abhi_Arcade_Solution)
 
-## Run in CloudShell and follow video:
+## Run in terminal and follow video:
 
 ```
 git clone https://github.com/rosera/pet-theory.git
