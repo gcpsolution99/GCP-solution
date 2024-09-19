@@ -53,4 +53,4 @@ if (process.argv.length != 3 || recordCount < 1 || isNaN(recordCount)) {
   process.exit(1);
 }
 
-createTestDa
+createTestData(recordCount);
