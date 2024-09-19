@@ -1,5 +1,3 @@
-echo " Started !!"
-
 git clone https://github.com/rosera/pet-theory.git
 cd pet-theory/lab02
 npm i && npm audit fix --force
@@ -61,6 +59,3 @@ body { background: #ECEFF1; color: rgba(0,0,0,0.87); font-family: Roboto, Helvet
 EOF_END
 
 firebase deploy
-
-
-echo " Completed !!"
