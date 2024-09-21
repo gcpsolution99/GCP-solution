@@ -1,7 +1,5 @@
 # Please like share & subscribe to [Abhi arcade solution](http://www.youtube.com/@Abhi_Arcade_Solution)
 
-## Run in CloudShell and follow video:
-
 ## Task 1: Follow Video
 
 ## Task 2: Create view --> users_region --> replace below code
