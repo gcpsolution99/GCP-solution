@@ -53,7 +53,7 @@ gcloud bigtable instances tables restore \
 --destination-instance=ecommerce-recommendations \
 --project=$DEVSHELL_PROJECT_ID
 
-sleep 100
+sleep 500
 
 gcloud dataflow jobs run import-sessions --gcs-location gs://dataflow-templates-$REGION/latest/GCS_SequenceFile_to_Cloud_Bigtable --region $REGION --staging-location gs://$DEVSHELL_PROJECT_ID/temp --parameters bigtableProject=$DEVSHELL_PROJECT_ID,bigtableInstanceId=ecommerce-recommendations,bigtableTableId=SessionHistory,sourcePattern=gs://cloud-training/OCBL377/retail-engagements-sales-00000-of-00001,mutationThrottleLatencyMs=0
 
@@ -61,7 +61,7 @@ gcloud dataflow jobs run import-recommendations --gcs-location gs://dataflow-tem
 
 echo "${YELLOW}${BOLD}NOW${RESET}" "${WHITE}${BOLD}Check The Score${RESET}" "${GREEN}${BOLD}Upto Task 4${RESET}"
 
-sleep 300
+sleep 500
 
 gcloud bigtable backups delete PersonalizedProducts_7 --instance=ecommerce-recommendations \
   --cluster=ecommerce-recommendations-c1  --quiet
