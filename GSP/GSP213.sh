@@ -15,13 +15,13 @@ for line in "${pattern[@]}"
 do
     echo -e "${YELLOW}${line}${NC}"
 done
-gcloud compute instances create blue --project=$DEVSHELL_PROJECT_ID --location=$location --machine-type=e2-medium --network-interface=network-tier=PREMIUM,stack-type=IPV4_ONLY,subnet=default --metadata=enable-oslogin=true --maintenance-policy=MIGRATE --provisioning-model=STANDARD --tags=web-server,http-server --create-disk=auto-delete=yes,boot=yes,device-name=blue,image=projects/debian-cloud/global/images/debian-11-bullseye-v20230509,mode=rw,size=10,type=projects/$DEVSHELL_PROJECT_ID/locations/$location/diskTypes/pd-balanced --no-shielded-secure-boot --shielded-vtpm --shielded-integrity-monitoring --labels=goog-ec-src=vm_add-gcloud --reservation-affinity=any
+gcloud compute instances create blue --project=$DEVSHELL_PROJECT_ID --zone=$zone --machine-type=e2-medium --network-interface=network-tier=PREMIUM,stack-type=IPV4_ONLY,subnet=default --metadata=enable-oslogin=true --maintenance-policy=MIGRATE --provisioning-model=STANDARD --tags=web-server,http-server --create-disk=auto-delete=yes,boot=yes,device-name=blue,image=projects/debian-cloud/global/images/debian-11-bullseye-v20230509,mode=rw,size=10,type=projects/$DEVSHELL_PROJECT_ID/zones/$zone/diskTypes/pd-balanced --no-shielded-secure-boot --shielded-vtpm --shielded-integrity-monitoring --labels=goog-ec-src=vm_add-gcloud --reservation-affinity=any
 
 gcloud compute instances create green --project=$DEVSHELL_PROJECT_ID --=$ --machine-type=e2-medium --network-interface=network-tier=PREMIUM,stack-type=IPV4_ONLY,subnet=default --metadata=enable-oslogin=true --maintenance-policy=MIGRATE --provisioning-model=STANDARD --create-disk=auto-delete=yes,boot=yes,device-name=blue,image=projects/debian-cloud/global/images/debian-11-bullseye-v20230509,mode=rw,size=10,type=projects/$DEVSHELL_PROJECT_ID/s/$/diskTypes/pd-balanced --no-shielded-secure-boot --shielded-vtpm --shielded-integrity-monitoring --labels=goog-ec-src=vm_add-gcloud --reservation-affinity=any
 
 gcloud compute --project=$DEVSHELL_PROJECT_ID firewall-rules create allow-http-web-server --direction=INGRESS --priority=1000 --network=default --action=ALLOW --rules=tcp:80,icmp --source-ranges=0.0.0.0/0 --target-tags=web-server
 
-gcloud compute instances create test-vm --machine-type=f1-micro --subnet=default --location=$location
+gcloud compute instances create test-vm --machine-type=f1-micro --subnet=default --zone=$zone
 
 gcloud iam service-accounts create network-admin --description="Service account for Network Admin role" --display-name="Network-admin"
 
@@ -34,18 +34,18 @@ sudo apt-get install nginx-light -y
 sudo sed -i "14c\<h1>Welcome to the blue server!</h1>" /var/www/html/index.nginx-debian.html
 EOF_END
 
-gcloud compute scp bluessh.sh blue:/tmp --project=$DEVSHELL_PROJECT_ID --location=$location --quiet
+gcloud compute scp bluessh.sh blue:/tmp --project=$DEVSHELL_PROJECT_ID --zone=$zone --quiet
 
-gcloud compute ssh blue --project=$DEVSHELL_PROJECT_ID --location=$location --quiet --command="bash /tmp/bluessh.sh" --ssh-flag="-o ConnectTimeout=60"
+gcloud compute ssh blue --project=$DEVSHELL_PROJECT_ID --zone=$zone --quiet --command="bash /tmp/bluessh.sh" --ssh-flag="-o ConnectTimeout=60"
 
 cat > greenssh.sh <<'EOF_END'
 sudo apt-get install nginx-light -y
 sudo sed -i "14c\<h1>Welcome to the green server!</h1>" /var/www/html/index.nginx-debian.html
 EOF_END
 
-gcloud compute scp greenssh.sh green:/tmp --project=$DEVSHELL_PROJECT_ID --location=$location --quiet
+gcloud compute scp greenssh.sh green:/tmp --project=$DEVSHELL_PROJECT_ID --zone=$zone --quiet
 
-gcloud compute ssh green --project=$DEVSHELL_PROJECT_ID --location=$location --quiet --command="bash /tmp/greenssh.sh"
+gcloud compute ssh green --project=$DEVSHELL_PROJECT_ID --zone=$zone --quiet --command="bash /tmp/greenssh.sh"
 
 pattern=(
 "**********************************************************"
