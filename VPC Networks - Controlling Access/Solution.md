@@ -6,7 +6,7 @@
 ## Run in CloudShell and follow video:
 
 ```
-export location=
+export zone=
 ```
 
 ```
