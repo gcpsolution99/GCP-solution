@@ -84,7 +84,7 @@ declare -a IPs=()
 gcloud compute instances create $VM_WS \
           --image-family=ubuntu-2204-lts \
           --image-project=ubuntu-os-cloud \
-          --LOCATION=${LOCATION} \
+          --zone=${zone} \
           --boot-disk-size 50G \
           --boot-disk-type pd-ssd \
           --can-ip-forward \
@@ -95,7 +95,7 @@ gcloud compute instances create $VM_WS \
           --custom-memory=16GB \
           --custom-vm-type=e2 \
           --metadata=enable-oslogin=FALSE
-IP=$(gcloud compute instances describe $VM_WS --LOCATION ${LOCATION} \
+IP=$(gcloud compute instances describe $VM_WS --zone ${zone} \
      --format='get(networkInterfaces[0].networkIP)')
 IPs+=("$IP")
 
@@ -105,7 +105,7 @@ do
     gcloud compute instances create $vm \
               --image-family=ubuntu-2204-lts \
               --image-project=ubuntu-os-cloud \
-              --LOCATION=${LOCATION} \
+              --zone=${zone} \
               --boot-disk-size 150G \
               --boot-disk-type pd-ssd \
               --can-ip-forward \
@@ -116,7 +116,7 @@ do
               --custom-memory=16GB \
               --custom-vm-type=e2 \
               --metadata=enable-oslogin=FALSE
-    IP=$(gcloud compute instances describe $vm --LOCATION ${LOCATION} \
+    IP=$(gcloud compute instances describe $vm --zone ${zone} \
          --format='get(networkInterfaces[0].networkIP)')
     IPs+=("$IP")
 done
@@ -126,7 +126,7 @@ sleep 60
 
 for vm in "${VMs[@]}"
 do
-    while ! gcloud compute ssh root@$vm --LOCATION=$LOCATION --command "echo SSH to $vm succeeded" </dev/null
+    while ! gcloud compute ssh root@$vm --zone=$zone --command "echo SSH to $vm succeeded" </dev/null
     do
         echo "Trying to SSH into $vm failed. Sleeping for 5 seconds. zzzZZzzZZ"
         sleep 5
@@ -137,7 +137,7 @@ done
 i=2
 for vm in "${VMs[@]}"
 do
-    gcloud compute ssh root@$vm --LOCATION ${LOCATION} << EOF
+    gcloud compute ssh root@$vm --zone ${zone} << EOF
         apt-get -qq update > /dev/null
         apt-get -qq install -y jq > /dev/null
         set -x
@@ -158,7 +158,7 @@ EOF
 done
 
 
-gcloud compute ssh root@$VM_WS --LOCATION ${LOCATION} << EOF
+gcloud compute ssh root@$VM_WS --zone ${zone} << EOF
 set -x
 export PROJECT_ID=\$(gcloud config get-value project)
 gcloud iam service-accounts keys create bm-gcr.json \
@@ -185,13 +185,13 @@ mv /root/.siege/siege.conf.new /root/.siege/siege.conf
 EOF
 
 
-gcloud compute ssh root@$VM_WS --LOCATION ${LOCATION} << EOF
+gcloud compute ssh root@$VM_WS --zone ${zone} << EOF
 set -x
 ssh-keygen -t rsa -N "" -f /root/.ssh/id_rsa
 sed 's/ssh-rsa/root:ssh-rsa/' ~/.ssh/id_rsa.pub > ssh-metadata
 for vm in ${VMs[@]}
 do
-    gcloud compute instances add-metadata \$vm --LOCATION ${LOCATION} --metadata-from-file ssh-keys=ssh-metadata
+    gcloud compute instances add-metadata \$vm --zone ${zone} --metadata-from-file ssh-keys=ssh-metadata
 done
 EOF
 
