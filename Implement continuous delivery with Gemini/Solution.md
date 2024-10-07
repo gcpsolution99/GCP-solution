@@ -8,7 +8,9 @@
 ```
 export LOCATION=
 ```
-
+```
+export REGION=
+```
 ```
 curl -LO raw.githubusercontent.com/gcpsolution99/GCP-solution/refs/heads/main/GSP/abhigemini.sh
 
