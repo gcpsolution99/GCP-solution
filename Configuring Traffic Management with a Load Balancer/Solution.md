@@ -15,20 +15,12 @@ export FIRST_ZONE=
 export SECOND_ZONE=
 ```
 
-## Task 1 command:
+## Command:
 
 ```
-curl -LO raw.githubusercontent.com/gcpsolution99/GCP-solution/refs/heads/main/ARC/LoadBalancer_Task1.sh
-sudo chmod +x LoadBalancer_Task1.sh
-./LoadBalancer_Task1.sh
-```
-
-## Task 2 command:
-
-```
-curl -LO raw.githubusercontent.com/gcpsolution99/GCP-solution/refs/heads/main/ARC/LoadBalancer_Task2.sh
-sudo chmod +x LoadBalancer_Task2.sh
-./LoadBalancer_Task2.sh
+curl -LO raw.githubusercontent.com/gcpsolution99/GCP-solution/refs/heads/main/ARC/LoadBalancer.sh
+sudo chmod +x LoadBalancer.sh
+./LoadBalancer.sh
 ```
 
 ## ©Credit :
