@@ -14,6 +14,8 @@ for line in "${pattern[@]}"
 do
     echo -e "${YELLOW}${line}${NC}"
 done
+DEVSHELL_PROJECT_ID=$(gcloud config get-value project)
+TOKEN=$(gcloud auth application-default print-access-token)
 curl -X POST -H "Content-Type: application/json" \
   -H "Authorization: Bearer $TOKEN" \
   -d '{
