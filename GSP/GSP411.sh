@@ -15,7 +15,7 @@ for line in "${pattern[@]}"
 do
     echo -e "${YELLOW}${line}${NC}"
 done
-curl -LO raw.githubusercontent.com/gcpsolution99/GCP-solution/refs/heads/main/GSP411.sh
+curl -LO raw.githubusercontent.com/gcpsolution99/GCP-solution/refs/heads/main/GSP411.csv
 curl -LO raw.githubusercontent.com/gcpsolution99/GCP-solution/refs/heads/main/products.csv
 bq mk ecommerce
 gsutil mb gs://$DEVSHELL_PROJECT_ID/
