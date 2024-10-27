@@ -7,9 +7,7 @@
 
 ```
 curl -LO raw.githubusercontent.com/gcpsolution99/GCP-solution/refs/heads/main/GSP/GSP411.sh
-
 sudo chmod +x GSP411.sh
-
 ./GSP411.sh
 ```
 
