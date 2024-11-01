@@ -1,17 +1,17 @@
-cat > prepare_disk.sh <<'EOF_END'
-
+gcloud auth list
+export PROJECT_ID=$(gcloud config get-value project)
+export PROJECT_ID=$DEVSHELL_PROJECT_ID
+export ZONE=us-central1-a
+gcloud config set compute/zone $ZONE
+gcloud compute instances create quickstart-vm --project=$DEVSHELL_PROJECT_ID --zone=$ZONE --machine-type=e2-small --image-family=debian-11 --image-project=debian-cloud --tags=http-server,https-server && gcloud compute firewall-rules create default-allow-http --target-tags=http-server --allow tcp:80 --description="Allow HTTP traffic" && gcloud compute firewall-rules create default-allow-https --target-tags=https-server --allow tcp:443 --description="Allow HTTPS traffic"
+cat > cp_disk.sh <<'EOF_CP'
 sudo apt-get update && sudo apt-get install apache2 php7.0 -y
-
 curl -sSO https://dl.google.com/cloudagents/add-google-cloud-ops-agent-repo.sh
 sudo bash add-google-cloud-ops-agent-repo.sh --also-install
-
 # Configures Ops Agent to collect telemetry from the app and restart Ops Agent.
-
 set -e
-
 # Create a back up of the existing file so existing configurations are not lost.
 sudo cp /etc/google-cloud-ops-agent/config.yaml /etc/google-cloud-ops-agent/config.yaml.bak
-
 # Configure the Ops Agent.
 sudo tee /etc/google-cloud-ops-agent/config.yaml > /dev/null << EOF
 metrics:
@@ -40,38 +40,36 @@ EOF
 sudo service google-cloud-ops-agent restart
 sleep 60
 
-timeout 120 bash -c -- 'while true; do curl localhost; sleep $((RANDOM % 4)) ; done'
+EOF_CP
 
-EOF_END
+export ZONE=us-central1-a
 
-export ZONE=$(gcloud compute instances list quickstart-vm --format 'csv[no-heading](zone)')
+gcloud compute scp cp_disk.sh quickstart-vm:/tmp --project=$DEVSHELL_PROJECT_ID --zone=$ZONE --quiet
 
-gcloud compute scp prepare_disk.sh quickstart-vm:/tmp --project=$DEVSHELL_PROJECT_ID --zone=$ZONE --quiet
+gcloud compute ssh quickstart-vm --project=$DEVSHELL_PROJECT_ID --zone=$ZONE --quiet --command="bash /tmp/cp_disk.sh"
 
-gcloud compute ssh quickstart-vm --project=$DEVSHELL_PROJECT_ID --zone=$ZONE --quiet --command="bash /tmp/prepare_disk.sh"
 
-cat > email-channel.json <<EOF_END
+
+cat > cp-channel.json <<EOF_CP
 {
-  "type": "email",
-  "displayName": "quickgcplab",
-  "description": "Awesome",
+  "type": "pubsub",
+  "displayName": "abhi",
+  "description": "abhi",
   "labels": {
-    "email_address": "$USER_EMAIL"
+    "topic": "projects/$DEVSHELL_PROJECT_ID/topics/notificationTopic"
   }
 }
-EOF_END
+EOF_CP
 
-gcloud beta monitoring channels create --channel-content-from-file="email-channel.json"
 
-# Get the channel ID
-email_channel_info=$(gcloud beta monitoring channels list)
-email_channel_id=$(echo "$email_channel_info" | grep -oP 'name: \K[^ ]+' | head -n 1)
+gcloud beta monitoring channels create --channel-content-from-file=cp-channel.json
 
-# Create an email notification channel
 
-# Create the alert policy
+email_channel=$(gcloud beta monitoring channels list)
+channel_id=$(echo "$email_channel" | grep -oP 'name: \K[^ ]+' | head -n 1)
 
-cat > stopped-vm-alert-policy.json <<EOF_END
+
+cat > stopped-vm-alert-policy.json <<EOF_CP
 {
   "displayName": "Apache traffic above threshold",
   "userLabels": {},
@@ -102,11 +100,9 @@ cat > stopped-vm-alert-policy.json <<EOF_END
   "combiner": "OR",
   "enabled": true,
   "notificationChannels": [
-    "$email_channel_id"
+    "$channel_id"
   ],
   "severity": "SEVERITY_UNSPECIFIED"
 }
-EOF_END
-
-# Create the alert policy
+EOF_CP
 gcloud alpha monitoring policies create --policy-from-file=stopped-vm-alert-policy.json
