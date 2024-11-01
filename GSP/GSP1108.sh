@@ -1,3 +1,20 @@
+#!/bin/bash
+
+YELLOW='\033[0;33m'
+NC='\033[0m' 
+
+pattern=(
+"**********************************************************"
+"**                 S U B S C R I B E  TO                **"
+"**                 ABHI ARCADE SOLUTION                 **"
+"**                                                      **"
+"**********************************************************"
+)
+
+for line in "${pattern[@]}"
+do
+    echo -e "${YELLOW}${line}${NC}"
+done
 gcloud auth list
 export PROJECT_ID=$(gcloud config get-value project)
 export PROJECT_ID=$DEVSHELL_PROJECT_ID
@@ -106,3 +123,15 @@ cat > stopped-vm-alert-policy.json <<EOF_CP
 }
 EOF_CP
 gcloud alpha monitoring policies create --policy-from-file=stopped-vm-alert-policy.json
+pattern=(
+"**********************************************************"
+"**                 S U B S C R I B E  TO                **"
+"**                 ABHI ARCADE SOLUTION                 **"
+"**                                                      **"
+"**********************************************************"
+)
+
+for line in "${pattern[@]}"
+do
+    echo -e "${YELLOW}${line}${NC}"
+done
