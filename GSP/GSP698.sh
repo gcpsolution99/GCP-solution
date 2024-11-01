@@ -22,7 +22,7 @@ gcloud projects add-iam-policy-binding ${GOOGLE_PROJECT}  \
    --role=roles/storage.admin
 git clone https://github.com/forseti-security/policy-library.git
 cp policy-library/samples/storage_denylist_public.yaml policy-library/policies/constraints/
-gsutil mb -l $REGION -p $GOOGLE_PROJECT gs://$CAI_BUCKET_NAME
+gsutil mb -l $LOCATION -p $GOOGLE_PROJECT gs://$CAI_BUCKET_NAME
 gcloud asset export \
     --output-path=gs://$CAI_BUCKET_NAME/resource_inventory.json \
     --content-type=resource \
