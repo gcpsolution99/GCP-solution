@@ -68,6 +68,7 @@ apt-get install apache2 -y
 service apache2 restart
 Code
 EOF"
+gcloud compute instances list
 pattern=(
 "**********************************************************"
 "**                 S U B S C R I B E  TO                **"
