@@ -287,7 +287,6 @@ view: order_items {
 }
 
 ```
-## Step - 6: Open each task and run from looker
 
 ## ©Credit :
 - All rights and credits goes to original content creator and Google Cloud [Google Cloud SkillBoost](https://www.cloudskillsboost.google/) 
