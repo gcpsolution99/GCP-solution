@@ -3,7 +3,7 @@
 ## Run in CloudShell and follow video:
 
 ```
-export REGION=
+export LOCATION=
 ```
 ```
 curl -LO raw.githubusercontent.com/gcpsolution99/GCP-solution/main/GSP/GSP207.sh
