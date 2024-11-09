@@ -43,7 +43,7 @@ gcloud scc muteconfigs create muting-admin-sa-findings \
 
 ### Task 4:
 
-- Open VM instances --> click edit --> reserve ext ip as --> static-ip
+- Open VM instances --> click edit --> reserve ext ip as --> `static-ip`
 - Open https://console.cloud.google.com/security/web-scanner/scanConfigs
 
 ### Task 5:
