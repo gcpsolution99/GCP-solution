@@ -22,13 +22,7 @@ BUCKET_NAME="${PROJECT_ID}-bucket"
 TOPIC_ID=my-id
 gsutil mb gs://$BUCKET_NAME
 gcloud pubsub topics create $TOPIC_ID
-if [ "$LOCATION" == "us-central1" ]; then
-  gcloud app create --region us-central
-elif [ "$LOCATION" == "europe-west1" ]; then
-  gcloud app create --region europe-west
-else
-  gcloud app create --region "$LOCATION"
-fi
+gcloud app create --region "$LOCATION"
 gcloud scheduler jobs create pubsub publisher-job --schedule="* * * * *" \
     --topic=$TOPIC_ID --message-body="Hello!"
 sleep 90
