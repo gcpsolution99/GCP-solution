@@ -12,7 +12,7 @@ for line in "${pattern[@]}"
 do
     echo -e "${YELLOW}${line}${NC}"
 done
-gcloud config set compute/region $REGION
+gcloud config set compute/region $LOCATION
 gcloud services disable dataflow.googleapis.com
 gcloud services enable dataflow.googleapis.com
 gcloud services enable cloudscheduler.googleapis.com
@@ -22,19 +22,19 @@ BUCKET_NAME="${PROJECT_ID}-bucket"
 TOPIC_ID=my-id
 gsutil mb gs://$BUCKET_NAME
 gcloud pubsub topics create $TOPIC_ID
-if [ "$REGION" == "us-central1" ]; then
+if [ "$LOCATION" == "us-central1" ]; then
   gcloud app create --region us-central
-elif [ "$REGION" == "europe-west1" ]; then
+elif [ "$LOCATION" == "europe-west1" ]; then
   gcloud app create --region europe-west
 else
-  gcloud app create --region "$REGION"
+  gcloud app create --region "$LOCATION"
 fi
 gcloud scheduler jobs create pubsub publisher-job --schedule="* * * * *" \
     --topic=$TOPIC_ID --message-body="Hello!"
 sleep 90
-gcloud scheduler jobs run publisher-job --location=$REGION
+gcloud scheduler jobs run publisher-job --location=$LOCATION
 sleep 90
-gcloud scheduler jobs run publisher-job --location=$REGION
+gcloud scheduler jobs run publisher-job --location=$LOCATION
 cat > automate_commands.sh <<EOF_END
 #!/bin/bash
 git clone https://github.com/GoogleCloudPlatform/python-docs-samples.git
@@ -42,7 +42,7 @@ cd python-docs-samples/pubsub/streaming-analytics
 pip install -U -r requirements.txt
 python PubSubToGCS.py \
 --project=$PROJECT_ID \
---region=$REGION \
+--region=$LOCATION \
 --input_topic=projects/$PROJECT_ID/topics/$TOPIC_ID \
 --output_path=gs://$BUCKET_NAME/samples/output \
 --runner=DataflowRunner \
