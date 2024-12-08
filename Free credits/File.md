@@ -3,7 +3,7 @@
 
 ### Step 1:- Logout if you're alreday logged in
 ### Step 2:- Open skillboost url: https://www.cloudskillsboost.google/catalog?keywords=GSP282&event=Your
-### Step 3:- Enter Access Code: `6y-multi1-event-90`   (Without any extra space)
+### Step 3:- Enter Access Code: `1p-gccsb-12`   (Without any extra space)
 ### Step 4:- Login with your account 
 ### Step 5:- Complete Lab
 
