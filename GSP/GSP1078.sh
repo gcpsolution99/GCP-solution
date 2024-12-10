@@ -30,8 +30,8 @@ gcloud iam service-accounts add-iam-policy-binding \
 $PROJECT_NUMBER-compute@developer.gserviceaccount.com \
 --member=serviceAccount:$PROJECT_NUMBER@cloudbuild.gserviceaccount.com \
 --role=roles/iam.serviceAccountUser
-git config --global user.email "$USER@@techcps.net"
-git config --global user.name "techcps"
+git config --global user.email "$USER@@abhi.net"
+git config --global user.name "abhi"
 git clone https://github.com/GoogleCloudPlatform/training-data-analyst
 cd training-data-analyst/self-paced-labs/cloud-run/canary
 rm -rf ../../.git
