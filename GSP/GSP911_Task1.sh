@@ -4,7 +4,7 @@ export PROJECT_ID=$(gcloud config get-value project)
 export PROJECT_NUMBER=$(gcloud projects describe ${PROJECT_ID} \
     --format="value(projectNumber)")
 
-export 1st_zone=$(gcloud compute project-info describe \
+export ZONE_1=$(gcloud compute project-info describe \
 --format="value(commonInstanceMetadata.items[google-compute-default-zone])")
 
 export REGION_1=$(gcloud compute project-info describe \
