@@ -19,7 +19,7 @@ gcloud compute firewall-rules create fw-a --direction=INGRESS --priority=1000 --
 gcloud compute firewall-rules create fw-b --direction=INGRESS --priority=1000 --network=vpc-b --action=ALLOW --rules=tcp:22 --source-ranges=0.0.0.0/0
 
 gcloud compute instances create vpc-a-vm-1 \
-    --zone=$1st_zone \
+    --zone=$ZONE_1 \
     --machine-type=e2-medium \
     --network-interface=network-tier=PREMIUM,stack-type=IPV4_ONLY,subnet=vpc-a-sub1-use4 \
     --metadata=enable-oslogin=true \
