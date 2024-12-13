@@ -6,50 +6,13 @@
 ## Run in CloudShell and follow video:
 
 ```
-export ZONE_VALUE=
+export ZONE=
 ```
-
-## Task 1:
-
 ```
-curl -LO raw.githubusercontent.com/gcpsolution99/GCP-solution/refs/heads/main/GSP/GSP911_Task1.sh
-
-sudo chmod +x GSP911_Task1.sh
-
-./GSP911_Task1.sh
+curl -LO raw.githubusercontent.com/gcpsolution99/GCP-solution/refs/heads/main/GSP/GSP911.sh
+sudo chmod +x GSP911.sh
+./GSP911.sh
 ```
-
-## Task 2:
-
-```
-curl -LO raw.githubusercontent.com/gcpsolution99/GCP-solution/refs/heads/main/GSP/GSP911_Task2.sh
-
-sudo chmod +x GSP911_Task2.sh
-
-./GSP911_Task2.sh
-```
-
-## Task 3:
-
-```
-curl -LO raw.githubusercontent.com/gcpsolution99/GCP-solution/refs/heads/main/GSP/GSP911_Task3.sh
-
-sudo chmod +x GSP911_Task3.sh
-
-./GSP911_Task3.sh
-```
-
-## Task 4:
-
-```
-curl -LO raw.githubusercontent.com/gcpsolution99/GCP-solution/refs/heads/main/GSP/GSP911_Task4.sh
-
-sudo chmod +x GSP911_Task4.sh
-
-./GSP911_Task4.sh
-```
-
-## Task 5:
 - Open network security --> add icmp 
 
 ## ©Credit :
