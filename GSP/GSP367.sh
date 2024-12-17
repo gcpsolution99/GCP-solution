@@ -113,10 +113,8 @@ deploy_success=false
 
 while [ "$deploy_success" = false ]; do
   if deploy_function; then
-    echo "Function deployed successfully..[https://www.youtube.com/@techcps]"
     deploy_success=true
   else
-    echo "Deployment Retrying, please subscribe to techcps..[https://www.youtube.com/@techcps]"
     sleep 10
   fi
 done
