@@ -22,8 +22,8 @@ gcloud app deploy --version=one --quiet
 cat > pubsub-channel.json <<EOF_END
     {
       "type": "pubsub",
-      "displayName": "quicklab",
-      "description": "subscribe to quicklab",
+      "displayName": "a",
+      "description": "a",
       "labels": {
         "topic": "projects/$DEVSHELL_PROJECT_ID/topics/notificationTopic"
       },
