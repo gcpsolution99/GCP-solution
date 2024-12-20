@@ -1,0 +1,103 @@
+#!/bin/bash
+YELLOW='\033[0;33m'
+NC='\033[0m' 
+pattern=(
+"**********************************************************"
+"**                 S U B S C R I B E  TO                **"
+"**                 ABHI ARCADE SOLUTION                 **"
+"**                                                      **"
+"**********************************************************"
+)
+for line in "${pattern[@]}"
+do
+    echo -e "${YELLOW}${line}${NC}"
+done
+export ZONE=$(gcloud compute project-info describe \
+--format="value(commonInstanceMetadata.items[google-compute-default-zone])")
+gcloud projects get-iam-policy $DEVSHELL_PROJECT_ID \
+--format=json >./policy.json
+jq '.auditConfigs = [
+  {
+    "service": "allServices",
+    "auditLogConfigs": [
+      { "logType": "ADMIN_READ" },
+      { "logType": "DATA_READ" },
+      { "logType": "DATA_WRITE" }
+    ]
+  }
+] | .' policy.json > updated_policy.json
+gcloud projects set-iam-policy $DEVSHELL_PROJECT_ID \
+./updated_policy.json
+bq --location=US mk --dataset $DEVSHELL_PROJECT_ID:auditlogs_dataset
+check_progress
+gsutil mb gs://$DEVSHELL_PROJECT_ID
+gsutil cp sample.txt gs://$DEVSHELL_PROJECT_ID
+gcloud compute networks create mynetwork --subnet-mode=auto
+gcloud compute instances create default-us-vm \
+--machine-type=e2-micro \
+--zone="$ZONE" --network=mynetwork
+gsutil rm -r gs://$DEVSHELL_PROJECT_ID
+gcloud logging read \
+"logName=projects/$DEVSHELL_PROJECT_ID/logs/cloudaudit.googleapis.com%2Factivity \
+AND protoPayload.serviceName=storage.googleapis.com \
+AND protoPayload.methodName=storage.buckets.delete"
+gsutil mb gs://$DEVSHELL_PROJECT_ID
+gsutil mb gs://$DEVSHELL_PROJECT_ID-test
+gsutil cp sample.txt gs://$DEVSHELL_PROJECT_ID-test
+gcloud compute instances delete --zone="$ZONE" \
+--delete-disks=all default-us-vm --quiet
+echo -e "${GREEN}${BOLD}Deleting the bucket and capturing logs...${RESET}"
+gsutil rm -r gs://$DEVSHELL_PROJECT_ID
+gsutil rm -r gs://$DEVSHELL_PROJECT_ID-test
+bq query --nouse_legacy_sql --project_id=$DEVSHELL_PROJECT_ID '
+SELECT
+  timestamp,
+  resource.labels.instance_id,
+  protopayload_auditlog.authenticationInfo.principalEmail,
+  protopayload_auditlog.resourceName,
+  protopayload_auditlog.methodName
+FROM
+  `auditlogs_dataset.cloudaudit_googleapis_com_activity_*`
+WHERE
+  PARSE_DATE("%Y%m%d", _TABLE_SUFFIX) BETWEEN
+  DATE_SUB(CURRENT_DATE(), INTERVAL 7 DAY) AND
+  CURRENT_DATE()
+  AND resource.type = "gce_instance"
+  AND operation.first IS TRUE
+  AND protopayload_auditlog.methodName = "v1.compute.instances.delete"
+ORDER BY
+  timestamp,
+  resource.labels.instance_id
+LIMIT
+  1000'
+bq query --nouse_legacy_sql --project_id=$DEVSHELL_PROJECT_ID '
+SELECT
+  timestamp,
+  resource.labels.bucket_name,
+  protopayload_auditlog.authenticationInfo.principalEmail,
+  protopayload_auditlog.resourceName,
+  protopayload_auditlog.methodName
+FROM
+  `auditlogs_dataset.cloudaudit_googleapis_com_activity_*`
+WHERE
+  PARSE_DATE("%Y%m%d", _TABLE_SUFFIX) BETWEEN
+  DATE_SUB(CURRENT_DATE(), INTERVAL 7 DAY) AND
+  CURRENT_DATE()
+  AND resource.type = "gcs_bucket"
+  AND protopayload_auditlog.methodName = "storage.buckets.delete"
+ORDER BY
+  timestamp,
+  resource.labels.bucket_name
+LIMIT
+  1000'
+pattern=(
+"**********************************************************"
+"**                 S U B S C R I B E  TO                **"
+"**                 ABHI ARCADE SOLUTION                 **"
+"**                                                      **"
+"**********************************************************"
+)
+for line in "${pattern[@]}"
+do
+    echo -e "${YELLOW}${line}${NC}"
+done
