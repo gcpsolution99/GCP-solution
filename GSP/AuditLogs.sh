@@ -31,6 +31,7 @@ gcloud projects set-iam-policy $DEVSHELL_PROJECT_ID \
 bq --location=US mk --dataset $DEVSHELL_PROJECT_ID:auditlogs_dataset
 check_progress
 gsutil mb gs://$DEVSHELL_PROJECT_ID
+echo "this is a sample file" > sample.txt
 gsutil cp sample.txt gs://$DEVSHELL_PROJECT_ID
 gcloud compute networks create mynetwork --subnet-mode=auto
 gcloud compute instances create default-us-vm \
@@ -41,12 +42,13 @@ gcloud logging read \
 "logName=projects/$DEVSHELL_PROJECT_ID/logs/cloudaudit.googleapis.com%2Factivity \
 AND protoPayload.serviceName=storage.googleapis.com \
 AND protoPayload.methodName=storage.buckets.delete"
+echo -e "${YELLOW}${BOLD}Creating and testing another bucket...${RESET}"
 gsutil mb gs://$DEVSHELL_PROJECT_ID
 gsutil mb gs://$DEVSHELL_PROJECT_ID-test
+echo "this is another sample file" > sample2.txt
 gsutil cp sample.txt gs://$DEVSHELL_PROJECT_ID-test
 gcloud compute instances delete --zone="$ZONE" \
 --delete-disks=all default-us-vm --quiet
-echo -e "${GREEN}${BOLD}Deleting the bucket and capturing logs...${RESET}"
 gsutil rm -r gs://$DEVSHELL_PROJECT_ID
 gsutil rm -r gs://$DEVSHELL_PROJECT_ID-test
 bq query --nouse_legacy_sql --project_id=$DEVSHELL_PROJECT_ID '
