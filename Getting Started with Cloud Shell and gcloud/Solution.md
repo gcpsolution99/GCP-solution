@@ -10,11 +10,11 @@ export ZONE=
 ```
 
 ```
-curl -LO raw.githubusercontent.com/gcpsolution99/GCP-solution/refs/heads/main/GSP/GSP811.sh
+curl -LO raw.githubusercontent.com/gcpsolution99/GCP-solution/refs/heads/main/GSP/GSP002_2025.sh
 
-sudo chmod +x GSP811.sh
+sudo chmod +x GSP002_2025.sh
 
-./GSP811.sh
+./GSP002_2025.sh
 ```
 
 ## ©Credit :
