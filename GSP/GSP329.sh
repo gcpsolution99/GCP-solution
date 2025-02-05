@@ -23,10 +23,10 @@ gcloud projects add-iam-policy-binding $DEVSHELL_PROJECT_ID --member=serviceAcco
 sleep 130
 gcloud iam service-accounts keys create sample-sa-key.json --iam-account sample-sa@$DEVSHELL_PROJECT_ID.iam.gserviceaccount.com
 export GOOGLE_APPLICATION_CREDENTIALS=${PWD}/sample-sa-key.json
-wget https://raw.githubusercontent.com/gcpsolution99/GCP-solution/refs/heads/main/analyze-images-v21.py
-sed -i "s/'en'/'${LOCAL}'/g" analyze-images-v21.py
-python3 analyze-images-v21.py
-python3 analyze-images-v21.py $DEVSHELL_PROJECT_ID $DEVSHELL_PROJECT_ID
+wget https://raw.githubusercontent.com/gcpsolution99/GCP-solution/refs/heads/main/analyze-images-v2.py
+sed -i "s/'en'/'${LOCAL}'/g" analyze-images-v2.py
+python3 analyze-images-v2.py
+python3 analyze-images-v2.py $DEVSHELL_PROJECT_ID $DEVSHELL_PROJECT_ID
 bq query --use_legacy_sql=false "SELECT locale,COUNT(locale) as lcount FROM image_classification_dataset.image_text_detail GROUP BY locale ORDER BY lcount DESC"
 pattern=(
 "**********************************************************"
