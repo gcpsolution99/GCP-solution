@@ -14,7 +14,12 @@ do
 done
 export ZONE=$(gcloud compute project-info describe --format="value(commonInstanceMetadata.items[google-compute-default-zone])")
 export REGION=$(gcloud compute project-info describe --format="value(commonInstanceMetadata.items[google-compute-default-region])")
+PROJECT_NUMBER=$(gcloud projects describe $(gcloud config get-value project) --format="value(projectNumber)")
 
+gcloud projects add-iam-policy-binding $DEVSHELL_PROJECT_ID \
+    --member="serviceAccount:$PROJECT_NUMBER-compute@developer.gserviceaccount.com" \
+    --role="roles/storage.admin"
+    
 gcloud dataproc clusters create qlab \
   --enable-component-gateway \
   --region $REGION \
