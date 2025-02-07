@@ -6,35 +6,14 @@
 ## Run in CloudShell and follow video:
 
 ```
-export PROJECT_ID=
+curl -LO raw.githubusercontent.com/gcpsolution99/GCP-solution/refs/heads/main/GSP/GSP123_Feb.sh
+
+sudo chmod +x GSP123_Feb.sh
+
+./GSP123_Feb.sh
 ```
 
-```
-export ZONE=$(gcloud compute project-info describe --format="value(commonInstanceMetadata.items[google-compute-default-zone])")
-export REGION=$(gcloud compute project-info describe --format="value(commonInstanceMetadata.items[google-compute-default-region])")
-    
-gcloud dataproc clusters create qlab \
-  --enable-component-gateway \
-  --region $REGION \
-  --zone $ZONE \
-  --master-machine-type e2-standard-4 \
-  --master-boot-disk-type pd-balanced \
-  --master-boot-disk-size 100 \
-  --num-workers 2 \
-  --worker-machine-type e2-standard-2 \
-  --worker-boot-disk-size 100 \
-  --image-version 2.2-debian12 \
-  --project $PROJECT_ID
-  
-sleep 30
 
-gcloud dataproc jobs submit spark \
-  --region $REGION \
-  --cluster qlab \
-  --class org.apache.spark.examples.SparkPi \
-  --jars file:///usr/lib/spark/examples/jars/spark-examples.jar \
-  -- 1000
-```
 
 ## ©Credit :
 - All rights and credits goes to original content of Google Cloud [Google Cloud SkillBoost](https://www.cloudskillsboost.google/) 
