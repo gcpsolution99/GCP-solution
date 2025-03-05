@@ -6,9 +6,6 @@
 
 Open link:
 
-File: [Uploading deidentify-model-response-v1.0.0.ipynb…]()
-
-
 
 ## ©Credit :
 - All rights and credits goes to original content of Google Cloud [Google Cloud SkillBoost](https://www.cloudskillsboost.google/) 
