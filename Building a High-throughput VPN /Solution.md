@@ -14,7 +14,7 @@ export ZONE_2=
 ```
 
 ```
-curl -LO raw.githubusercontent.com/gcpsolution99/GCP-solution/main/Building%20a%20High-throughput%20VPN%20/GSP062.sh
+curl -LO raw.githubusercontent.com/gcpsolution99/GCP-solution/refs/heads/main/Building%20a%20High-throughput%20VPN%20/GSP062.sh
 
 sudo chmod +x GSP062.sh
 
