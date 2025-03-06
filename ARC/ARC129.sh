@@ -157,7 +157,9 @@ FROM \`${DEVSHELL_PROJECT_ID}.online_shop.user_online_sessions\`"
 
 gcloud projects remove-iam-policy-binding ${DEVSHELL_PROJECT_ID} \
   --member="user:$IAM_USER" \
-  --role="roles/storage.objectViewer"pattern=(
+  --role="roles/storage.objectViewer"
+  
+pattern=(
 "**********************************************************"
 "**                 S U B S C R I B E  TO                **"
 "**                 ABHI ARCADE SOLUTION                 **"
