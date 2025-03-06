@@ -50,7 +50,7 @@ gcloud compute instances create instance-1 \
 --metadata=enable-oslogin=true --maintenance-policy=MIGRATE --provisioning-model=STANDARD \
 --scopes=https://www.googleapis.com/auth/cloud-platform --create-disk=auto-delete=yes,boot=yes,device-name=instance-1,image=projects/debian-cloud/global/images/debian-11-bullseye-v20230912,mode=rw,size=10,type=projects/$DEVSHELL_PROJECT_ID/zones/$ZONE/diskTypes/pd-balanced
 
-gcloud dns --project=$DEVSHELL_PROJECT_ID policies create dns-test-policy --description="quickgcplab" --networks="default" --private-alternative-name-servers="" --no-enable-inbound-forwarding --enable-logging
+gcloud dns --project=$DEVSHELL_PROJECT_ID policies create dns-test-policy --description="gcplab" --networks="default" --private-alternative-name-servers="" --no-enable-inbound-forwarding --enable-logging
 
 sleep 30
 gcloud compute ssh instance-1 --zone=$ZONE --tunnel-through-iap --project "$DEVSHELL_PROJECT_ID" --quiet --command "gcloud projects get-iam-policy \$(gcloud config get project) && curl etd-malware-trigger.goog"
