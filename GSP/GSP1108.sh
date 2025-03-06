@@ -16,19 +16,29 @@ do
     echo -e "${YELLOW}${line}${NC}"
 done
 gcloud auth list
-export PROJECT_ID=$(gcloud config get-value project)
-export PROJECT_ID=$DEVSHELL_PROJECT_ID
-export ZONE=us-central1-a
-gcloud config set compute/zone $ZONE
-gcloud compute instances create quickstart-vm --project=$DEVSHELL_PROJECT_ID --zone=$ZONE --machine-type=e2-small --image-family=debian-11 --image-project=debian-cloud --tags=http-server,https-server && gcloud compute firewall-rules create default-allow-http --target-tags=http-server --allow tcp:80 --description="Allow HTTP traffic" && gcloud compute firewall-rules create default-allow-https --target-tags=https-server --allow tcp:443 --description="Allow HTTPS traffic"
-cat > cp_disk.sh <<'EOF_CP'
+export ZONE=$(gcloud compute project-info describe \
+--format="value(commonInstanceMetadata.items[google-compute-default-zone])")
+
+gcloud compute instances create quickstart-vm --zone=$ZONE --machine-type=e2-small --tags=http-server,https-server --create-disk=auto-delete=yes,boot=yes,device-name=quickstart-vm,image=projects/debian-cloud/global/images/debian-11-bullseye-v20241009,mode=rw,size=10,type=pd-balanced
+
+gcloud compute firewall-rules create allow-http-from-internet --target-tags=http-server --allow tcp:80 --source-ranges 0.0.0.0/0 --description="Allow HTTP from the internet"
+
+gcloud compute firewall-rules create allow-https-from-internet --target-tags=https-server --allow tcp:443 --source-ranges 0.0.0.0/0 --description="Allow HTTPS from the internet"
+
+cat > prepare_disk.sh <<'EOF_END'
+
 sudo apt-get update && sudo apt-get install apache2 php7.0 -y
+
 curl -sSO https://dl.google.com/cloudagents/add-google-cloud-ops-agent-repo.sh
 sudo bash add-google-cloud-ops-agent-repo.sh --also-install
+
 # Configures Ops Agent to collect telemetry from the app and restart Ops Agent.
+
 set -e
+
 # Create a back up of the existing file so existing configurations are not lost.
 sudo cp /etc/google-cloud-ops-agent/config.yaml /etc/google-cloud-ops-agent/config.yaml.bak
+
 # Configure the Ops Agent.
 sudo tee /etc/google-cloud-ops-agent/config.yaml > /dev/null << EOF
 metrics:
@@ -57,36 +67,29 @@ EOF
 sudo service google-cloud-ops-agent restart
 sleep 60
 
-EOF_CP
+EOF_END
 
-export ZONE=us-central1-a
+gcloud compute scp prepare_disk.sh quickstart-vm:/tmp --project=$DEVSHELL_PROJECT_ID --zone=$ZONE --quiet
 
-gcloud compute scp cp_disk.sh quickstart-vm:/tmp --project=$DEVSHELL_PROJECT_ID --zone=$ZONE --quiet
+gcloud compute ssh quickstart-vm --project=$DEVSHELL_PROJECT_ID --zone=$ZONE --quiet --command="bash /tmp/prepare_disk.sh"
 
-gcloud compute ssh quickstart-vm --project=$DEVSHELL_PROJECT_ID --zone=$ZONE --quiet --command="bash /tmp/cp_disk.sh"
-
-
-
-cat > cp-channel.json <<EOF_CP
+cat > email-channel.json <<EOF_END
 {
-  "type": "pubsub",
-  "displayName": "abhi",
-  "description": "abhi",
+  "type": "email",
+  "displayName": "quickgcplab",
+  "description": "Awesome",
   "labels": {
-    "topic": "projects/$DEVSHELL_PROJECT_ID/topics/notificationTopic"
+    "email_address": "$USER_EMAIL"
   }
 }
-EOF_CP
+EOF_END
 
+gcloud beta monitoring channels create --channel-content-from-file="email-channel.json"
 
-gcloud beta monitoring channels create --channel-content-from-file=cp-channel.json
+email_channel_info=$(gcloud beta monitoring channels list)
+email_channel_id=$(echo "$email_channel_info" | grep -oP 'name: \K[^ ]+' | head -n 1)
 
-
-email_channel=$(gcloud beta monitoring channels list)
-channel_id=$(echo "$email_channel" | grep -oP 'name: \K[^ ]+' | head -n 1)
-
-
-cat > stopped-vm-alert-policy.json <<EOF_CP
+cat > vm-alert-policy.json <<EOF_END
 {
   "displayName": "Apache traffic above threshold",
   "userLabels": {},
@@ -112,17 +115,21 @@ cat > stopped-vm-alert-policy.json <<EOF_CP
     }
   ],
   "alertStrategy": {
-    "autoClose": "1800s"
+    "autoClose": "1800s",
+    "notificationPrompts": [
+      "OPENED"
+    ]
   },
   "combiner": "OR",
   "enabled": true,
   "notificationChannels": [
-    "$channel_id"
+    "$email_channel_id"
   ],
   "severity": "SEVERITY_UNSPECIFIED"
 }
-EOF_CP
-gcloud alpha monitoring policies create --policy-from-file=stopped-vm-alert-policy.json
+EOF_END
+
+gcloud alpha monitoring policies create --policy-from-file=vm-alert-policy.json
 pattern=(
 "**********************************************************"
 "**                 S U B S C R I B E  TO                **"
