@@ -63,30 +63,8 @@ sleep 30
 
 gcloud compute ssh instance-1 --zone=$ZONE --tunnel-through-iap --project "$DEVSHELL_PROJECT_ID" --quiet --command "gcloud projects get-iam-policy \$(gcloud config get project) && curl etd-malware-trigger.goog"
 
-function check_progress {
-    while true; do
-        echo
-        echo -n "********************* Checked progress for Task 1 AND Task 2 ? (Y/N) *********************"
-        read -r user_input
-        if [[ "$user_input" == "Y" || "$user_input" == "y" ]]; then
-            echo
-            echo "Wait for task complition...."
-            echo
-            break
-        elif [[ "$user_input" == "N" || "$user_input" == "n" ]]; then
-            echo
-            echo "Check progress for Task 1 AND Task 2"
-        else
-            echo
-            echo "Wait for task complition...."
-        fi
-    done
-}
-
-check_progress
-gcloud compute instances delete instance-1 --zone=$ZONE --quiet
-
-echo
+echo -n "******************* Check my progress for Task 1 AND Task 2 *********************"
+    
 pattern=(
 "**********************************************************"
 "**                 S U B S C R I B E  TO                **"
