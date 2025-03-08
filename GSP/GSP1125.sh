@@ -66,11 +66,11 @@ gcloud compute ssh instance-1 --zone=$ZONE --tunnel-through-iap --project "$DEVS
 function check_progress {
     while true; do
         echo
-        echo -n "Checked progress for Task 1 AND Task 2 ? (Y/N)"
+        echo -n "********************* Checked progress for Task 1 AND Task 2 ? (Y/N) *********************"
         read -r user_input
         if [[ "$user_input" == "Y" || "$user_input" == "y" ]]; then
             echo
-            echo ""
+            echo "Wait for task complition...."
             echo
             break
         elif [[ "$user_input" == "N" || "$user_input" == "n" ]]; then
@@ -78,7 +78,7 @@ function check_progress {
             echo "Check progress for Task 1 AND Task 2"
         else
             echo
-            echo ""
+            echo "Wait for task complition...."
         fi
     done
 }
