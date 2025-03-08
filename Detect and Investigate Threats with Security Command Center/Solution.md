@@ -6,6 +6,7 @@
 
 ## Run in CloudShell and follow video:
 
+### Step 1: Task 1 and Task 2:
 ```
 curl -LO raw.githubusercontent.com/gcpsolution99/GCP-solution/refs/heads/main/GSP/GSP1125.sh
 
@@ -13,6 +14,14 @@ sudo chmod +x GSP1125.sh
 
 ./GSP1125.sh
 ```
+### Step 2: Check my progress for Task 1 and Task 2
+### Step 3: Run below command for Task 3:
+```
+gcloud compute instances delete instance-1 --zone=$ZONE --quiet
+```
+
+
+
 
 ## ©Credit :
 - All rights and credits goes to original content of Google Cloud [Google Cloud SkillBoost](https://www.cloudskillsboost.google/) 
