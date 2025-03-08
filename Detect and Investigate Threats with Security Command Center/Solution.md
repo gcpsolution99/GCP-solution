@@ -17,7 +17,7 @@ sudo chmod +x GSP1125.sh
 ### Step 2: Check my progress for Task 1 and Task 2
 ### Step 3: Run below command for Task 3:
 ```
-gcloud compute instances delete instance-1 --zone=$ZONE --quiet
+gcloud compute instances delete instance-1
 ```
 
 
