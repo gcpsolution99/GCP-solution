@@ -32,8 +32,7 @@ EMAIL="$(gcloud config get-value core/account)"
 
 cat > details.json << EOF
   App name: AbhiArcadeSolution
-  Authorized domains: $AUTH_DOMAIN
-  Developer contact email: $EMAIL
+  Contact email: $EMAIL
 EOF
 
 cat details.json
