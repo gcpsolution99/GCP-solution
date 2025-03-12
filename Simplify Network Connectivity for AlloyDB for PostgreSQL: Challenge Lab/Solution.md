@@ -19,6 +19,44 @@ sudo chmod +x GCC040.sh
 ./GCC040.sh
 ```
 
+### Open VM instance: https://console.cloud.google.com/compute/instances
+```
+psql -h REPLACE_IP -U postgres -d postgres
+```
+
+### Paste in SSH
+```
+CREATE TABLE patients (
+    patient_id INT PRIMARY KEY,
+    first_name VARCHAR(50),
+    last_name VARCHAR(50),
+    date_of_birth DATE,
+    medical_record_number VARCHAR(100) UNIQUE,
+    last_visit_date DATE,
+    primary_physician VARCHAR(100)
+);
+
+CREATE TABLE clinical_trials (
+    trial_id INT PRIMARY KEY,
+    trial_name VARCHAR(100),
+    start_date DATE,
+    end_date DATE,
+    lead_researcher VARCHAR(100),
+    number_of_participants INT,
+    trial_status VARCHAR(20)
+);
+
+INSERT INTO patients (patient_id, first_name, last_name, date_of_birth, medical_record_number, last_visit_date, primary_physician)
+VALUES 
+(1, 'Abhishek', 'a', '1970-01-10', 'MRN19537236', '2023-01-25', 'Dr. AK'),
+(2, 'Abhi', 'arcade', '1974-02-15', 'MRN0059124', '2022-03-30', 'Dr. JK');
+
+INSERT INTO clinical_trials (trial_id, trial_name, start_date, end_date, lead_researcher, number_of_participants, trial_status)
+VALUES 
+    (1, 'AbhiArcade YT', '2021-02-02', '2021-01-31', 'Dr. Abhishek MJ', 250, 'Ongoing'),
+    (2, 'AbhiArcade Solution', '2022-01-11', '2022-01-30', 'Dr. Vikas CK', 300, 'Completed');
+```
+
 ## ©Credit :
 - All rights and credits goes to original content of Google Cloud [Google Cloud SkillBoost](https://www.cloudskillsboost.google/) 
 
