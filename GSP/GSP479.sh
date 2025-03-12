@@ -12,7 +12,6 @@ for line in "${pattern[@]}"
 do
     echo -e "${YELLOW}${line}${NC}"
 done
-export ZONE
 export REGION="${ZONE%-*}"
 gcloud services enable compute.googleapis.com 
 gcloud services enable container.googleapis.com 
@@ -21,25 +20,17 @@ gcloud services enable containeranalysis.googleapis.com
 gcloud services enable binaryauthorization.googleapis.com 
 
 sleep 90
-
 gsutil -m cp -r gs://spls/gke-binary-auth/* .
 cd gke-binary-auth-demo
-
 gcloud config set compute/region $REGION    
 gcloud config set compute/zone $ZONE
-
 chmod +x create.sh
 chmod +x delete.sh
 chmod 777 validate.sh
-
 sed -i 's/validMasterVersions\[0\]/defaultClusterVersion/g' ./create.sh
-
 ./create.sh -c my-cluster-1
-
 ./validate.sh -c my-cluster-1
-
 gcloud beta container binauthz policy export > policy.yaml
-
 cat > policy.yaml <<EOF_END
 defaultAdmissionRule:
   enforcementMode: ENFORCED_BLOCK_AND_AUDIT_LOG
@@ -55,11 +46,9 @@ EOF_END
 gcloud beta container binauthz policy import policy.yaml
 docker pull gcr.io/google-containers/nginx:latest
 gcloud auth configure-docker --quiet
-
 PROJECT_ID="$(gcloud config get-value project)"
 docker tag gcr.io/google-containers/nginx "gcr.io/${PROJECT_ID}/nginx:latest"
 docker push "gcr.io/${PROJECT_ID}/nginx:latest"
-
 gcloud container images list-tags "gcr.io/${PROJECT_ID}/nginx"
 
 cat << EOF | kubectl create -f -
@@ -126,6 +115,7 @@ clusterAdmissionRules:
 admissionWhitelistPatterns:
 - namePattern: "gcr.io/${DEVSHELL_PROJECT_ID}/nginx*"
 name: projects/$DEVSHELL_PROJECT_ID/policy
+
 EOF_END
 
 gcloud beta container binauthz policy import policy.yaml
@@ -152,8 +142,10 @@ ATTESTOR_EMAIL="$(gcloud config get-value core/account)" # This uses your curren
 NOTE_ID="Human-Attestor-Note" # No spaces
 NOTE_DESC="Human Attestation Note Demo"
 
+
 NOTE_PAYLOAD_PATH="note_payload.json"
 IAM_REQUEST_JSON="iam_request.json"
+
 
 cat > ${NOTE_PAYLOAD_PATH} << EOF
 {
@@ -166,6 +158,7 @@ cat > ${NOTE_PAYLOAD_PATH} << EOF
 }
 EOF
 
+
 curl -X POST \
     -H "Content-Type: application/json" \
     -H "Authorization: Bearer $(gcloud auth print-access-token)"  \
@@ -175,11 +168,14 @@ curl -X POST \
 curl -H "Authorization: Bearer $(gcloud auth print-access-token)"  \
     "https://containeranalysis.googleapis.com/v1beta1/projects/${PROJECT_ID}/notes/${NOTE_ID}"
 
+
 PGP_PUB_KEY="generated-key.pgp"
 
 sudo apt-get install rng-tools -y
 
 sudo rngd -r /dev/urandom -y
+
+##gpg --quick-generate-key --yes ${ATTESTOR_EMAIL} --quiet 
 
 gcloud --project="${PROJECT_ID}" \
     beta container binauthz attestors create "${ATTESTOR}" \
@@ -226,7 +222,10 @@ gcloud beta container binauthz policy update \
 --require-attestations \
 --attestor="projects/${PROJECT_ID}/attestors/${ATTESTOR}"
 
-echo "${BOLD_TEXT}${CYAN_TEXT}Creating Kubernetes Pod with attested image...${NO_COLOR}"
+
+## need to test
+
+
 IMAGE_PATH="gcr.io/${PROJECT_ID}/nginx"
 IMAGE_DIGEST="$(gcloud container images list-tags --format='get(digest)' $IMAGE_PATH | head -1)"
 
@@ -242,6 +241,7 @@ spec:
     ports:
     - containerPort: 80
 EOF
+
 
 cat << EOF | kubectl create -f -
 apiVersion: v1
@@ -260,5 +260,5 @@ EOF
 
 ./delete.sh -c my-cluster-1
 
-echo "Attestor resource path: projects/${PROJECT_ID}/attestors/${ATTESTOR}"
 
+echo "projects/${PROJECT_ID}/attestors/${ATTESTOR}" # Copy this output to your copy/paste buffer
