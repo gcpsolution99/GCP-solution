@@ -9,27 +9,27 @@
 
 ```
 explore: +loan_details {
-    query: quicklab_task_2 {
+    query: Task_2 {
       measures: [loan.outstanding_loans_amount]
     }
 }
 
 explore: +loan_details {
-    query: quicklab_task_3 {
+    query: Task_3 {
       dimensions: [loan.loan_status]
       measures: [loan.outstanding_loans_amount]
     }
 }
 
 explore: +loan_details {
-    query: quicklab_task_4 {
+    query: Task_4 {
       dimensions: [loan.state]
       measures: [loan.outstanding_count]
     }
 }
 
 explore: +loan_details {
-    query: quicklab_task_5 {
+    query: Task_5 {
       dimensions: [
         customer.address_state,
         customer.annual_income,
