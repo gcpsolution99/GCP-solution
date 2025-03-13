@@ -7,11 +7,11 @@
 
 ### Task 1:
 ```
-curl -LO raw.githubusercontent.com/gcpsolution99/GCP-solution/refs/heads/main/GSP/GSP1008.sh
+curl -LO raw.githubusercontent.com/gcpsolution99/GCP-solution/refs/heads/main/GSP/GSP866.sh
 
-sudo chmod +x GSP1008.sh
+sudo chmod +x GSP866.sh
 
-./GSP1008.sh
+./GSP866.sh
 ```
 
 ### Task 2: Follow video
