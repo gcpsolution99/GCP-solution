@@ -12,30 +12,34 @@ for line in "${pattern[@]}"
 do
     echo -e "${YELLOW}${line}${NC}"
 done
+bq query --use_legacy_sql=false "
 SELECT
   *
 FROM
-  `bigquery-public-data.new_york_citibike.citibike_stations`
+  \`bigquery-public-data.new_york_citibike.citibike_stations\`
 LIMIT
   10
+"
 
-
-  -- Finds Citi Bike stations with > 30 bikes
+# Second query: Finds Citi Bike stations with > 30 bikes
+bq query --use_legacy_sql=false "
 SELECT
-  ST_GeogPoint(longitude, latitude)  AS WKT,
+  ST_GeogPoint(longitude, latitude) AS WKT,
   num_bikes_available
 FROM
-  `bigquery-public-data.new_york.citibike_stations`
+  \`bigquery-public-data.new_york.citibike_stations\`
 WHERE num_bikes_available > 30
+"
 
-
--- Finds Citi Bike stations with > 30 bikes
+# Third query: Same as the second, repeated
+bq query --use_legacy_sql=false "
 SELECT
-  ST_GeogPoint(longitude, latitude)  AS WKT,
+  ST_GeogPoint(longitude, latitude) AS WKT,
   num_bikes_available
 FROM
-  `bigquery-public-data.new_york.citibike_stations`
+  \`bigquery-public-data.new_york.citibike_stations\`
 WHERE num_bikes_available > 30
+"
 
 pattern=(
 "**********************************************************"
