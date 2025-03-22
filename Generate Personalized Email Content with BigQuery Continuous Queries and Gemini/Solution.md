@@ -3,8 +3,7 @@
 #### ⚠️ Disclaimer :
 - **This script is for the educational purposes just to show how quickly we can solve lab. Please make sure that you have a thorough understanding of the instructions before utilizing any scripts. We do not promote cheating or  misuse of resources. Our objective is to assist you in mastering the labs with efficiency, while also adhering to both 'qwiklabs' terms of services and YouTube's community guidelines.**
 
-## Run in CloudShell and follow video:
-
+### Task 1: Run in CloudShell
 ```
 curl -LO raw.githubusercontent.com/gcpsolution99/GCP-solution/refs/heads/main/GSP/GSP1284.sh
 
@@ -12,6 +11,20 @@ sudo chmod +x GSP1284.sh
 
 ./GSP1284.sh
 ```
+
+### Task 2: Add principal manually then run below command by replacing your 
+```
+gcloud pubsub topics add-iam-policy-binding recapture_customer \
+  --member="serviceAccount:REPLACE_NEW_SERVICE_ACCOUNT" \
+  --role="roles/pubsub.viewer"
+
+
+gcloud pubsub topics add-iam-policy-binding recapture_customer \
+  --member="serviceAccount:REPLACE_NEW_SERVICE_ACCOUNT" \
+  --role="roles/pubsub.publisher"
+```
+
+### Task 3,4,5: Do manually (Follow video)
 
 ## ©Credit :
 - All rights and credits goes to original content of Google Cloud [Google Cloud SkillBoost](https://www.cloudskillsboost.google/) 
