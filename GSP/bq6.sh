@@ -12,7 +12,7 @@ for line in "${pattern[@]}"
 do
     echo -e "${YELLOW}${line}${NC}"
 done
-export PROJECT_ID=$(gcloud projects list --format="value(PROJECT_ID)")
+export PROJECT_ID=$(gcloud config get-value project)
 
 bq query --use_legacy_sql=false '
 CREATE OR REPLACE TABLE `$PROJECT_ID.ecommerce.backup_orders` AS
