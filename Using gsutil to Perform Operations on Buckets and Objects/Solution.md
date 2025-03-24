@@ -15,11 +15,11 @@ sudo chmod +x GSP130.sh
 
 ### Task 9:
 ```
-curl -LO raw.githubusercontent.com/gcpsolution99/GCP-solution/refs/heads/main/GSP/GSP130.sh
+curl -LO raw.githubusercontent.com/gcpsolution99/GCP-solution/refs/heads/main/GSP/130Task9.sh
 
-sudo chmod +x GSP130.sh
+sudo chmod +x 130Task9.sh
 
-./GSP130.sh
+./130Task9.sh
 ```
 
 ## ©Credit :
