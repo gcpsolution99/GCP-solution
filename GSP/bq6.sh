@@ -17,7 +17,7 @@ bq mk ecommerce
 bq mk --table ecommerce.customer_orders \
     customer_orders_id:INTEGER,device_id:STRING,username:STRING,department:STRING,office:STRING
 
-bq mk --table work_day.backup_orders \
+bq mk --table ecommerce.backup_orders \
     backup_orders_id:INTEGER,device_id:STRING,username:STRING,department:STRING,office:STRING
 pattern=(
 "**********************************************************"
