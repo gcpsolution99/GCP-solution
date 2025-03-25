@@ -6,10 +6,6 @@
 ## Run in CloudShell and follow video:
 
 ```
-export project_id=
-```
-
-```
 curl -LO raw.githubusercontent.com/gcpsolution99/GCP-solution/refs/heads/main/GSP/bq5.sh
 
 sudo chmod +x bq5.sh
