@@ -12,19 +12,12 @@ for line in "${pattern[@]}"
 do
     echo -e "${YELLOW}${line}${NC}"
 done
-export PROJECT_ID=$(gcloud config get-value project)
-
-bq query --use_legacy_sql=false '
-CREATE OR REPLACE TABLE `$PROJECT_ID.ecommerce.backup_orders` AS
-SELECT *
-FROM `$PROJECT_ID.ecommerce.customer_orders`;
-'
-
-bq query --use_legacy_sql=false --schedule "every 1 month" --display_name "Monthly Backup of Customer Data" 
---description "This query backs up customer_orders to backup_orders every month" \
-'CREATE OR REPLACE TABLE `$PROJECT_ID.ecommerce.backup_orders` AS
-SELECT *
-FROM `$PROJECT_ID.ecommerce.customer_orders`;'
+PROJECT_ID=$(gcloud config get-value project)
+REGION="us"
+gcloud iam service-accounts add-iam-policy-binding ${PROJECT_ID}@${PROJECT_ID}.iam.gserviceaccount.com \
+--role='roles/iam.serviceAccountTokenCreator'
+sleep 30
+bq mk --transfer_config --project_id="${PROJECT_ID}" --target_dataset=ecommerce --display_name="Monthly Customer Orders Backup" --params='{"query":"SELECT * FROM `'${PROJECT_ID}'.ecommerce.customer_orders`", "destination_table_name_template":"backup_orders", "write_disposition":"WRITE_TRUNCATE"}' --data_source=scheduled_query --schedule="1 of month 00:00" --location="${REGION}"
 pattern=(
 "**********************************************************"
 "**                 S U B S C R I B E  TO                **"
@@ -36,3 +29,4 @@ for line in "${pattern[@]}"
 do
     echo -e "${YELLOW}${line}${NC}"
 done
+ 
