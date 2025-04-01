@@ -8,11 +8,11 @@
 export USERNAME_2=
 ```
 ```
-curl -LO raw.githubusercontent.com/gcpsolution99/GCP-solution/refs/heads/main/GSP/GSP1250.sh
+curl -LO raw.githubusercontent.com/gcpsolution99/GCP-solution/refs/heads/main/Cloud%20IAM%3A%20Qwik%20Start/GSP064.sh
 
-sudo chmod +x GSP1250.sh
+sudo chmod +x GSP064.sh
 
-./GSP1250.sh
+./GSP064.sh
 ```
 
 ## ©Credit :
