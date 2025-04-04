@@ -1,3 +1,17 @@
+#!/bin/bash
+YELLOW='\033[0;33m'
+NC='\033[0m' 
+pattern=(
+"**********************************************************"
+"**                 S U B S C R I B E  TO                **"
+"**                 ABHI ARCADE SOLUTION                 **"
+"**                                                      **"
+"**********************************************************"
+)
+for line in "${pattern[@]}"
+do
+    echo -e "${YELLOW}${line}${NC}"
+done
 export PROJECT_ID=$(gcloud info --format="value(config.project)")
 
 git clone https://github.com/GoogleCloudPlatform/DIY-Tools.git
@@ -6,6 +20,7 @@ gcloud firestore import gs://$PROJECT_ID-firestore/prd-back
 
 PROJECT_NUMBER=$(gcloud projects list --filter="PROJECT_ID=$PROJECT_ID" --format="value(PROJECT_NUMBER)")
 SERVICE_ACCOUNT_EMAIL="${PROJECT_NUMBER}@cloudbuild.gserviceaccount.com"
+
 gcloud projects add-iam-policy-binding ${PROJECT_ID} \
     --member "serviceAccount:${SERVICE_ACCOUNT_EMAIL}" \
     --role "roles/artifactregistry.reader"
@@ -25,8 +40,6 @@ curl $CLOUD_RUN_SERVICE_URL/fs/$PROJECT_ID/symbols/product/symbol | jq .
 curl $CLOUD_RUN_SERVICE_URL/bq/$PROJECT_ID/publicviews/ca_zip_codes | jq .
 
 sleep 60
-
-#TASK 3
 
 cat > cloudbuild_gcf.yaml <<'EOF_END'
 # Copyright 2020 Google LLC
@@ -56,23 +69,13 @@ EOF_END
 
 gcloud builds submit --config cloudbuild_gcf.yaml --project $PROJECT_ID --no-source --substitutions=_GIT_SOURCE_BRANCH="master",_GIT_SOURCE_URL="https://github.com/GoogleCloudPlatform/DIY-Tools"
 
-
 gcloud alpha functions add-iam-policy-binding gcp-data-drive --member=allUsers --role=roles/cloudfunctions.invoker
-
 
 export CF_TRIGGER_URL=$(gcloud functions describe gcp-data-drive --format="value(httpsTrigger.url)")
 
 curl $CF_TRIGGER_URL/fs/$PROJECT_ID/symbols/product/symbol | jq .
 
 curl $CF_TRIGGER_URL/bq/$PROJECT_ID/publicviews/ca_zip_codes
-
-
-#TASK 4
-
-# sed -i "s/go121/go113/g" cmd/webserver/app.yaml
-
-# sed -i "s/go113/go121/g" cmd/webserver/app.yaml
-
 
 cat > cloudbuild_appengine.yaml <<'EOF_END'
 # Copyright 2020 Google LLC
@@ -104,19 +107,15 @@ steps:
   dir: 'DIY-Tools/gcp-data-drive/cmd/webserver'
 EOF_END
 
-
 gcloud builds submit  --config cloudbuild_appengine.yaml \
    --project $PROJECT_ID --no-source \
    --substitutions=_GIT_SOURCE_BRANCH="master",_GIT_SOURCE_URL="https://github.com/GoogleCloudPlatform/DIY-Tools"
-
-
 
 export TARGET_URL=https://$(gcloud app describe --format="value(defaultHostname)")
 
 curl $TARGET_URL/fs/$PROJECT_ID/symbols/product/symbol | jq .
 
 curl $TARGET_URL/bq/$PROJECT_ID/publicviews/ca_zip_codes | jq .
-
 
 cat > loadgen.sh <<EOF
 #!/bin/bash
@@ -131,3 +130,14 @@ gcloud builds submit --config cloudbuild_gcf.yaml --project $PROJECT_ID --no-sou
 chmod +x loadgen.sh
 
 ./loadgen.sh
+pattern=(
+"**********************************************************"
+"**                 S U B S C R I B E  TO                **"
+"**                 ABHI ARCADE SOLUTION                 **"
+"**                                                      **"
+"**********************************************************"
+)
+for line in "${pattern[@]}"
+do
+    echo -e "${YELLOW}${line}${NC}"
+done
