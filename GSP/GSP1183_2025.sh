@@ -12,6 +12,13 @@ for line in "${pattern[@]}"
 do
     echo -e "${YELLOW}${line}${NC}"
 done
+
+projectid_check() {
+  local project_id=$1
+  if [[ -z "$project_id" ]]; then
+    
+  fi
+}
 export PROJECT_ID=$(gcloud config get-value project)
 projectid_check "$PROJECT_ID"
 export PROJECT_NUMBER=$(gcloud projects describe $PROJECT_ID --format='value(projectNumber)')
