@@ -16,7 +16,7 @@ done
 projectid_check() {
   local project_id=$1
   if [[ -z "$project_id" ]]; then
-    
+    echo""
   fi
 }
 export PROJECT_ID=$(gcloud config get-value project)
