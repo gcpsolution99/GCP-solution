@@ -9,7 +9,7 @@
 export ZONE=
 ```
 ```
-export REGION
+export REGION=
 ```
 
 ```
