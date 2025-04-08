@@ -63,23 +63,24 @@ gcloud healthcare fhir-stores export bq $FHIR_STORE_ID \
   --bq-dataset=bq://$PROJECT_ID.$DATASET_ID \
   --schema-type=analytics \
   --project=$PROJECT_ID
-  
-echo "COMPLETED MANUAL STEPS (y/n):"
+
+echo "COMPLETED MANUAL STEPS ? (y/n):"
 read -r answer
 if [[ $answer == "y" || $answer == "Y" ]]; then
-    echo "SUBSCRIBE TO ABHI ARCADE SOLUTION....."
+    echo "SUBSCRIBE TO ABHI ARCADE SOLUTION......"
 else
-    "SUBSCRIBE TO ABHI ARCADE SOLUTION....."
+    echo "SUBSCRIBE TO ABHI ARCADE SOLUTION......"
 fi
 echo
 
 sleep 180
 
 gcloud healthcare fhir-stores export bq de_id \
---dataset=$DATASET_ID \
---location=$LOCATION \
---bq-dataset=bq://$PROJECT_ID.de_id \
---schema-type=analytics
+  --dataset=$DATASET_ID \
+  --location=$LOCATION \
+  --bq-dataset=bq://$PROJECT_ID.de_id \
+  --schema-type=analytics \
+  --project=$PROJECT_ID
 
 pattern=(
 "**********************************************************"
