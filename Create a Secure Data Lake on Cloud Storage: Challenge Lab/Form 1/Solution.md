@@ -14,11 +14,11 @@
 export ZONE=
 ```
 ```
-curl -LO raw.githubusercontent.com/gcpsolution99/GCP-solution/refs/heads/main/ARC/ARC119_4.sh
+curl -LO raw.githubusercontent.com/gcpsolution99/GCP-solution/refs/heads/main/ARC/ARC119_1.sh
 
-sudo chmod +x ARC119_4.sh
+sudo chmod +x ARC119_1.sh
 
-./ARC119_4.sh
+./ARC119_1.sh
 ```
 
 ## ©Credit :
