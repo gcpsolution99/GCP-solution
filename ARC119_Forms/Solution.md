@@ -3,6 +3,7 @@
 #### ⚠️ Disclaimer :
 - **This script is for the educational purposes just to show how quickly we can solve lab. Please make sure that you have a thorough understanding of the instructions before utilizing any scripts. We do not promote cheating or  misuse of resources. Our objective is to assist you in mastering the labs with efficiency, while also adhering to both 'qwiklabs' terms of services and YouTube's community guidelines.**
 
+------------------------------------------------------------------------------------------------------------------------
 
 ### 📕 Form 1: 
 Solution : [Link]()
@@ -13,6 +14,8 @@ Solution : [Link]()
  3. Create an entry group  
  4. Create a tag template (Storage bucket)  
 
+------------------------------------------------------------------------------------------------------------------------
+
 ### 📕 Form 2: 
 Solution : [Link]()
 
@@ -22,6 +25,8 @@ Solution : [Link]()
 3. Attach an existing Cloud Storage bucket to the zone  
 4. Create a tag template (Storage bucket)  
 
+------------------------------------------------------------------------------------------------------------------------
+
 ### 📕 Form 3: 
 Solution : [Link]()
 
@@ -30,6 +35,8 @@ Solution : [Link]()
 2. Add a zone to your lake 
 3. Attach an existing BigQuery Dataset to the Lake 
 4. Create a tag template (BigQuery Dataset)  
+
+------------------------------------------------------------------------------------------------------------------------
 
 ### 📕 Form 4: 
 Solution : [Link]()
