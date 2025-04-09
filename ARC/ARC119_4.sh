@@ -14,6 +14,7 @@ do
 done
 export REGION="${ZONE%-*}"
 
+echo "${CYAN_TEXT}${BOLD_TEXT}Step 1: Creating a Dataplex lake named 'customer-lake'...${RESET_FORMAT}"
 gcloud alpha dataplex lakes create customer-lake \
 --display-name="Customer-Lake" \
  --location=$REGION \
