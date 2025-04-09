@@ -6,7 +6,7 @@
 ------------------------------------------------------------------------------------------------------------------------
 
 ### 📕 Form 1: 
-Solution : [Link]()
+Solution : [Link](https://youtu.be/DAnpSlnUe_w)
 
 📋 Tasks:
  1. Create a Cloud Storage bucket 
