@@ -17,7 +17,7 @@ Solution : [Link](https://youtu.be/DAnpSlnUe_w)
 ------------------------------------------------------------------------------------------------------------------------
 
 ### 📕 Form 2: 
-Solution : [Link]()
+Solution : [Link](https://youtu.be/VRTeOICeCq4)
 
 📋 Tasks:
 1. Create a lake in Dataplex and add a zone to your lake 
