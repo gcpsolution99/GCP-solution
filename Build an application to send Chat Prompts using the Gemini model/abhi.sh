@@ -13,6 +13,10 @@ do
     echo -e "${YELLOW}${line}${NC}"
 done
 LAB_MODEL="gemini-2.0-flash-001"
+echo "Enter your REGION:"
+read -r REGION
+
+export REGION
 ID="$(gcloud projects list --format='value(PROJECT_ID)')"
 
 cat > SendChatwithoutStream.py <<EOF
@@ -82,11 +86,9 @@ print() # Add a newline after streaming output
 logging.info(f"Received full streaming response: {response_text}") # Added logging
 
 EOF
-
-echo "${GREEN_TEXT}${BOLD_TEXT}Executing SendChatwithStream.py...${RESET_FORMAT}"
 /usr/bin/python3 /home/student/SendChatwithStream.py
 
-sleep 10
+sleep 15
 pattern=(
 "**********************************************************"
 "**                 S U B S C R I B E  TO                **"
