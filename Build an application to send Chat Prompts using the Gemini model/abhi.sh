@@ -12,68 +12,77 @@ for line in "${pattern[@]}"
 do
     echo -e "${YELLOW}${line}${NC}"
 done
-
 ID="$(gcloud projects list --format='value(PROJECT_ID)')"
 
-
 cat > SendChatwithoutStream.py <<EOF
-import vertexai
-from vertexai.generative_models import GenerativeModel, ChatSession
+from google import genai
+from google.genai.types import HttpOptions, ModelContent, Part, UserContent
 
-project_id = "$ID"
-location = "$REGION"
+import logging
+from google.cloud import logging as gcp_logging
 
-vertexai.init(project=project_id, location=location)
-model = GenerativeModel("gemini-1.0-pro")
-chat = model.start_chat()
+# Initialize GCP logging
+gcp_logging_client = gcp_logging.Client()
+gcp_logging_client.setup_logging()
 
-def get_chat_response(chat: ChatSession, prompt: str) -> str:
-    response = chat.send_message(prompt)
-    return response.text
+client = genai.Client(
+    vertexai=True,
+    project='${ID}',
+    location='${REGION}',
+    http_options=HttpOptions(api_version="v1")
+)
+chat = client.chats.create(
+    model="${LAB_MODEL}",
+    history=[
+        UserContent(parts=[Part(text="Hello")]),
+        ModelContent(
+            parts=[Part(text="Great to meet you. What would you like to know?")],
+        ),
+    ],
+)
+response = chat.send_message("What are all the colors in a rainbow?")
+logging.info(f'Received response 1: {response.text}') # Added logging
+print(response.text)
 
-prompt = "Hello."
-print(get_chat_response(chat, prompt))
-
-prompt = "What are all the colors in a rainbow?"
-print(get_chat_response(chat, prompt))
-
-prompt = "Why does it appear when it rains?"
-print(get_chat_response(chat, prompt))
+response = chat.send_message("Why does it appear when it rains?")
+logging.info(f'Received response 2: {response.text}') # Added logging
+print(response.text)
 EOF
 
 /usr/bin/python3 /home/student/SendChatwithoutStream.py
+sleep 10
 
 cat > SendChatwithStream.py <<EOF
-import vertexai
-from vertexai.generative_models import GenerativeModel, ChatSession
+from google import genai
+from google.genai.types import HttpOptions
 
-project_id = "$ID"
-location = "$REGION"
+import logging
+from google.cloud import logging as gcp_logging
 
-vertexai.init(project=project_id, location=location)
-model = GenerativeModel("gemini-1.0-pro")
-chat = model.start_chat()
+# Initialize GCP logging
+gcp_logging_client = gcp_logging.Client()
+gcp_logging_client.setup_logging()
 
-def get_chat_response(chat: ChatSession, prompt: str) -> str:
-    text_response = []
-    responses = chat.send_message(prompt, stream=True)
-    for chunk in responses:
-        text_response.append(chunk.text)
-    return "".join(text_response)
+client = genai.Client(
+    vertexai=True,
+    project='${ID}',
+    location='${REGION}',
+    http_options=HttpOptions(api_version="v1")
+)
+chat = client.chats.create(model="${LAB_MODEL}")
+response_text = ""
 
-prompt = "Hello."
-print(get_chat_response(chat, prompt))
+logging.info("Sending streaming prompt...") # Added logging
+print("Streaming response:") # Added for clarity
+for chunk in chat.send_message_stream("What are all the colors in a rainbow?"):
+    print(chunk.text, end="")
+    response_text += chunk.text
+print() # Add a newline after streaming output
+logging.info(f"Received full streaming response: {response_text}") # Added logging
 
-prompt = "What are all the colors in a rainbow?"
-print(get_chat_response(chat, prompt))
-
-prompt = "Why does it appear when it rains?"
-print(get_chat_response(chat, prompt))
 EOF
 
-
 /usr/bin/python3 /home/student/SendChatwithStream.py
-
 pattern=(
 "**********************************************************"
 "**                 S U B S C R I B E  TO                **"
