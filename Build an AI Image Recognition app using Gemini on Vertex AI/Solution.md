@@ -5,9 +5,6 @@
 
 ## Run in CloudShell and follow video:
 ```
-export REGION=
-```
-```
 curl -LO raw.githubusercontent.com/gcpsolution99/GCP-solution/refs/heads/main/Build%20an%20AI%20Image%20Recognition%20app%20using%20Gemini%20on%20Vertex%20AI/abhi.sh
 source abhi.sh
 ```
