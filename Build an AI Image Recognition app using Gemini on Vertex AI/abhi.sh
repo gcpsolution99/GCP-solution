@@ -12,6 +12,8 @@ for line in "${pattern[@]}"
 do
     echo -e "${YELLOW}${line}${NC}"
 done
+read -r user_region
+export REGION="$region"
 ID="$(gcloud projects list --format='value(PROJECT_ID)')"
 
 cat > genai.py <<EOF_END
@@ -38,7 +40,6 @@ def generate_text(project_id: str, location: str) -> str:
 
     return response.text
 
-
 project_id = "$ID"
 location = "$REGION"
 
@@ -50,7 +51,6 @@ EOF_END
 /usr/bin/python3 /home/student/genai.py
 sleep 30
 /usr/bin/python3 /home/student/genai.py
-
 pattern=(
 "**********************************************************"
 "**                 S U B S C R I B E  TO                **"
