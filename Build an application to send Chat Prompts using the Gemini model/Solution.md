@@ -7,10 +7,8 @@
 ```
 export REGION=
 ```
-
 ```
 curl -LO raw.githubusercontent.com/gcpsolution99/GCP-solution/refs/heads/main/Build%20an%20application%20to%20send%20Chat%20Prompts%20using%20the%20Gemini%20model/abhi.sh
-
 source abhi.sh
 ```
 
