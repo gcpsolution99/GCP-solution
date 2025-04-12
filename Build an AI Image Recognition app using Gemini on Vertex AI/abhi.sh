@@ -12,6 +12,7 @@ for line in "${pattern[@]}"
 do
     echo -e "${YELLOW}${line}${NC}"
 done
+echo "Enter your REGION:"
 read -r user_region
 export REGION="$region"
 ID="$(gcloud projects list --format='value(PROJECT_ID)')"
