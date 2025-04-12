@@ -12,6 +12,7 @@ for line in "${pattern[@]}"
 do
     echo -e "${YELLOW}${line}${NC}"
 done
+LAB_MODEL="gemini-2.0-flash-001"
 ID="$(gcloud projects list --format='value(PROJECT_ID)')"
 
 cat > SendChatwithoutStream.py <<EOF
@@ -82,7 +83,10 @@ logging.info(f"Received full streaming response: {response_text}") # Added loggi
 
 EOF
 
+echo "${GREEN_TEXT}${BOLD_TEXT}Executing SendChatwithStream.py...${RESET_FORMAT}"
 /usr/bin/python3 /home/student/SendChatwithStream.py
+
+sleep 10
 pattern=(
 "**********************************************************"
 "**                 S U B S C R I B E  TO                **"
