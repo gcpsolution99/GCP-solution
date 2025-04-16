@@ -7,6 +7,9 @@
 
 ### 📝 Step 1: Run in below command in CloudShell 
 ```
+export ZONE=
+```
+```
 curl -LO raw.githubusercontent.com/gcpsolution99/GCP-solution/refs/heads/main/GSP/GSP293.sh
 
 sudo chmod +x GSP293.sh
