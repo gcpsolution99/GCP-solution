@@ -33,6 +33,7 @@ ORDER BY
 PKSuccessRate DESC, numPKAtt DESC
 "
 
+echo "${MAGENTA_TEXT}${BOLD_TEXT}Running the second query to analyze shot distances and goal percentages...${RESET_FORMAT}"
 bq query --use_legacy_sql=false \
 "
 WITH
@@ -46,11 +47,11 @@ SELECT
 using "average" field dimensions of 105x68 before combining in 2D dist calc */
 SQRT(
 POW(
-  (100 - positions[ORDINAL(1)].x) * $VALUE_X1/$VALUE_Y1,
-  2) +
+    (100 - positions[ORDINAL(1)].x) * $VALUE_X1/$VALUE_Y1,
+    2) +
 POW(
-  (60 - positions[ORDINAL(1)].y) * $VALUE_X2/$VALUE_Y2,
-  2)
+    (60 - positions[ORDINAL(1)].y) * $VALUE_X2/$VALUE_Y2,
+    2)
  ) AS shotDistance
 FROM
 \`soccer.$EVENT\`
@@ -74,6 +75,7 @@ ORDER BY
 ShotDistRound0
 "
 
+echo "${MAGENTA_TEXT}${BOLD_TEXT}Creating a machine learning model in BigQuery...${RESET_FORMAT}"
 bq query --use_legacy_sql=false \
 "
 CREATE MODEL \`$MODEL\`
@@ -110,6 +112,7 @@ Events.positions[ORDINAL(1)].y) IS NOT NULL
 ;
 "
 
+echo "${MAGENTA_TEXT}${BOLD_TEXT}Running predictions using the created model...${RESET_FORMAT}"
 bq query --use_legacy_sql=false \
 "
 SELECT
@@ -120,53 +123,53 @@ ML.PREDICT(
 MODEL \`$MODEL\`, 
 (
  SELECT
-   Events.playerId,
-   (Players.firstName || ' ' || Players.lastName) AS playerName,
-   Teams.name AS teamName,
-   CAST(Matches.dateutc AS DATE) AS matchDate,
-   Matches.label AS match,
+     Events.playerId,
+     (Players.firstName || ' ' || Players.lastName) AS playerName,
+     Teams.name AS teamName,
+     CAST(Matches.dateutc AS DATE) AS matchDate,
+     Matches.label AS match,
  /* Convert match period and event seconds to minute of match */
-   CAST((CASE
-     WHEN Events.matchPeriod = '1H' THEN 0
-     WHEN Events.matchPeriod = '2H' THEN 45
-     WHEN Events.matchPeriod = 'E1' THEN 90
-     WHEN Events.matchPeriod = 'E2' THEN 105
-     ELSE 120
-     END) +
-     CEILING(Events.eventSec / 60) AS INT64)
-     AS matchMinute,
-   Events.subEventName AS shotType,
-   /* 101 is known Tag for 'goals' from goals table */
-   (101 IN UNNEST(Events.tags.id)) AS isGoal,
+     CAST((CASE
+         WHEN Events.matchPeriod = '1H' THEN 0
+         WHEN Events.matchPeriod = '2H' THEN 45
+         WHEN Events.matchPeriod = 'E1' THEN 90
+         WHEN Events.matchPeriod = 'E2' THEN 105
+         ELSE 120
+         END) +
+         CEILING(Events.eventSec / 60) AS INT64)
+         AS matchMinute,
+     Events.subEventName AS shotType,
+     /* 101 is known Tag for 'goals' from goals table */
+     (101 IN UNNEST(Events.tags.id)) AS isGoal,
  
-   \`soccer.$FUNC_1\`(Events.positions[ORDINAL(1)].x,
-       Events.positions[ORDINAL(1)].y) AS shotDistance,
-   \`soccer.$FUNC_2\`(Events.positions[ORDINAL(1)].x,
-       Events.positions[ORDINAL(1)].y) AS shotAngle
+     \`soccer.$FUNC_1\`(Events.positions[ORDINAL(1)].x,
+             Events.positions[ORDINAL(1)].y) AS shotDistance,
+     \`soccer.$FUNC_2\`(Events.positions[ORDINAL(1)].x,
+             Events.positions[ORDINAL(1)].y) AS shotAngle
  FROM
-   \`soccer.$EVENT\` Events
+     \`soccer.$EVENT\` Events
  LEFT JOIN
-   \`soccer.matches\` Matches ON
-       Events.matchId = Matches.wyId
+     \`soccer.matches\` Matches ON
+             Events.matchId = Matches.wyId
  LEFT JOIN
-   \`soccer.competitions\` Competitions ON
-       Matches.competitionId = Competitions.wyId
+     \`soccer.competitions\` Competitions ON
+             Matches.competitionId = Competitions.wyId
  LEFT JOIN
-   \`soccer.players\` Players ON
-       Events.playerId = Players.wyId
+     \`soccer.players\` Players ON
+             Events.playerId = Players.wyId
  LEFT JOIN
-   \`soccer.teams\` Teams ON
-       Events.teamId = Teams.wyId
+     \`soccer.teams\` Teams ON
+             Events.teamId = Teams.wyId
  WHERE
-   /* Look only at World Cup matches to apply model */
-   Competitions.name = 'World Cup' AND
-   /* Includes both "open play" & free kick shots (but not penalties) */
-   (
-     eventName = 'Shot' OR
-     (eventName = 'Free Kick' AND subEventName IN ('Free kick shot'))
-   ) AND
-   /* Filter only to goals scored */
-   (101 IN UNNEST(Events.tags.id))
+     /* Look only at World Cup matches to apply model */
+     Competitions.name = 'World Cup' AND
+     /* Includes both "open play" & free kick shots (but not penalties) */
+     (
+         eventName = 'Shot' OR
+         (eventName = 'Free Kick' AND subEventName IN ('Free kick shot'))
+     ) AND
+     /* Filter only to goals scored */
+     (101 IN UNNEST(Events.tags.id))
 )
 )
 ORDER BY
