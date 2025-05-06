@@ -10,6 +10,7 @@ sudo chmod +x GSP1145_2025.sh
 ./GSP1145_2025.sh
 ```
 
+### Open dataplex: https://console.cloud.google.com/dataplex/search?referrer=search&project
 
 ## ©Credit :
 - All rights and credits goes to original content of Google Cloud [Google Cloud SkillBoost](https://www.cloudskillsboost.google/) 
