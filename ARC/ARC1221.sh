@@ -20,7 +20,7 @@ read -p "Enter your region2: " REGION2
 echo
 read -p "Enter your FUNCTION_NAME1: " FUNCTION_NAME1
 echo
-read -p "Enter your FUNCTION_NAME1: " FUNCTION_NAME2
+read -p "Enter your FUNCTION_NAME2: " FUNCTION_NAME2
 echo
 
 mkdir -p cloud-function-http-go
