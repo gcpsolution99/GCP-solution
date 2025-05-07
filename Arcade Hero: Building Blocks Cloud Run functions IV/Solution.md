@@ -7,10 +7,11 @@
 
 ```
 curl -LO raw.githubusercontent.com/gcpsolution99/GCP-solution/refs/heads/main/ARC/ARC1223.sh
+
 sudo chmod +x ARC1223.sh
+
 ./ARC1223.sh
 ```
-
 
 ## ©Credit :
 - All rights and credits goes to original content of Google Cloud [Google Cloud SkillBoost](https://www.cloudskillsboost.google/) 
