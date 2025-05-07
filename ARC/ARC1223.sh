@@ -22,6 +22,7 @@ echo
 read -p "Enter Cloud Function name: " FUNCTION_NAME
 echo
 
+mkdir -p cloud-function
 cat > cloud-function/index.js <<EOF
 exports.helloWorld = (req, res) => {
   res.send('Hello from Cloud Function!');
