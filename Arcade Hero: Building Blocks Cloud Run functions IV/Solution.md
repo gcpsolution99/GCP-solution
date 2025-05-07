@@ -6,7 +6,7 @@
 ## Run in CloudShell and follow video:
 
 ```
-curl -LO raw.githubusercontent.com/gcpsolution99/GCP-solution/refs/heads/main/ARC/ARC1223.sh
+curl -LO https://raw.githubusercontent.com/gcpsolution99/GCP-solution/refs/heads/main/ARC/ARC1223.sh
 
 sudo chmod +x ARC1223.sh
 
