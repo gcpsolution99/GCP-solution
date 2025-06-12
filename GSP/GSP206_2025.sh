@@ -22,8 +22,7 @@ export GOOGLE_PROJECT=$(gcloud config get-value project)
 
 rm -rf main.tf
 
-wget https://raw.githubusercontent.com/techcps/Google-Cloud-Skills-Boost/master/HTTPS%20Content-Based%20Load%20Balancer%20with%20Terraform/main.tf
-
+wget https://github.com/gcpsolution99/GCP-solution/blob/main/HTTPS%20Content-Based%20Load%20Balancer%20with%20Terraform%202025/main.tf
 
 cat > variables.tf <<EOF_CP
 variable "group1_region" {
