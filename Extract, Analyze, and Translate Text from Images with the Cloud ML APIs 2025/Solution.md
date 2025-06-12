@@ -6,11 +6,11 @@
 ## Run in CloudShell and follow video:
 
 ```
-curl -LO raw.githubusercontent.com/gcpsolution99/GCP-solution/refs/heads/main/GSP/GSP872.sh
+curl -LO raw.githubusercontent.com/gcpsolution99/GCP-solution/refs/heads/main/GSP/abhi075.sh
 
-sudo chmod +x GSP872.sh
+sudo chmod +x abhi075.sh
 
-./GSP872.sh
+./abhi075.sh
 ```
 
 ## ©Credit :
