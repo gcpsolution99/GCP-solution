@@ -12,9 +12,9 @@ for line in "${pattern[@]}"
 do
     echo -e "${YELLOW}${line}${NC}"
 done
-read -p "${YELLOW}${BOLD}Enter Region_One: ${RESET}" group1_region
-read -p "${YELLOW}${BOLD}Enter Region_Two: ${RESET}" group2_region
-read -p "${YELLOW}${BOLD}Enter Region_Three: ${RESET}" group3_region
+read -p "Enter Region_One:" group1_region
+read -p "Enter Region_Two:" group2_region
+read -p "Enter Region_Three:" group3_region
 
 git clone https://github.com/terraform-google-modules/terraform-google-lb-http.git
 cd ~/terraform-google-lb-http/examples/multi-backend-multi-mig-bucket-https-lb
