@@ -11,6 +11,7 @@ pip3 install tensorflow
 pip3 install --upgrade pip
 pip install -U pylint --user
 pip install -r requirements.txt
+curl -LO https://github.com/gcpsolution99/GCP-solution/blob/main/TensorFlow%3A%20Qwik%20Start%202025/model.ipynb
 ```
 
 ## ©Credit :
