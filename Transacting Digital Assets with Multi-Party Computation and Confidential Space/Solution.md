@@ -6,11 +6,11 @@
 ## Run in CloudShell and follow video:
 
 ```
-curl -LO raw.githubusercontent.com/gcpsolution99/GCP-solution/refs/heads/main/GSP/GSP277_2025.sh
+curl -LO raw.githubusercontent.com/gcpsolution99/GCP-solution/refs/heads/main/GSP/GSP1128.sh
 
-sudo chmod +x GSP277_2025.sh
+sudo chmod +x GSP1128.sh
 
-./GSP277_2025.sh
+./GSP1128.sh
 ```
 
 ## ©Credit :
