@@ -13,8 +13,8 @@ do
     echo -e "${YELLOW}${line}${NC}"
 done
 echo "Enter correct value:"
-read -p "${YELLOW}${BOLD}Enter the 1st ZONE: ${RESET}" ZONE_1
-read -p "${YELLOW}${BOLD}Enter the 2nd ZONE: ${RESET}" ZONE_2
+read -p "Enter the 1st ZONE: ${RESET}" ZONE_1
+read -p "Enter the 2nd ZONE: ${RESET}" ZONE_2
 
 export ZONE_1 ZONE_2
 export REGION_1="${ZONE_1%-*}"
@@ -116,8 +116,8 @@ gcloud compute instances create vpc-a-vm-1 --project=$DEVSHELL_PROJECT_ID --zone
 
 gcloud compute instances create vpc-b-vm-1 --project=$DEVSHELL_PROJECT_ID --zone=$ZONE_2 --machine-type=e2-medium --network-interface=network-tier=PREMIUM,stack-type=IPV4_ONLY,subnet=vpc-b-sub1-usw2 --metadata=enable-oslogin=true --maintenance-policy=MIGRATE --provisioning-model=STANDARD --service-account=$PROJECT_NUMBER-compute@developer.gserviceaccount.com --scopes=https://www.googleapis.com/auth/devstorage.read_only,https://www.googleapis.com/auth/logging.write,https://www.googleapis.com/auth/monitoring.write,https://www.googleapis.com/auth/service.management.readonly,https://www.googleapis.com/auth/servicecontrol,https://www.googleapis.com/auth/trace.append --create-disk=auto-delete=yes,boot=yes,device-name=vpc-b-vm-1,image=projects/debian-cloud/global/images/debian-11-bullseye-v20241210,mode=rw,size=10,type=pd-balanced --no-shielded-secure-boot --shielded-vtpm --shielded-integrity-monitoring --labels=goog-ec-src=vm_add-gcloud --reservation-affinity=any
 
-echo "${YELLOW}${BOLD}[https://console.cloud.google.com/net-security/firewall-manager/firewall-policies/details/fw-a?project=$DEVSHELL_PROJECT_ID]${RESET}"
-echo "${YELLOW}${BOLD}[https://console.cloud.google.com/net-security/firewall-manager/firewall-policies/details/fw-b?project=$DEVSHELL_PROJECT_ID]${RESET}"
+echo "[https://console.cloud.google.com/net-security/firewall-manager/firewall-policies/details/fw-a?project=$DEVSHELL_PROJECT_ID]${RESET}"
+echo "[https://console.cloud.google.com/net-security/firewall-manager/firewall-policies/details/fw-b?project=$DEVSHELL_PROJECT_ID]${RESET}"
 echo "icmp"
 pattern=(
 "**********************************************************"
