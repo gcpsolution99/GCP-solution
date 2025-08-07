@@ -18,11 +18,9 @@ REGION=$(gcloud compute project-info describe \
   --format="value(commonInstanceMetadata.items[google-compute-default-region])")
 PROJECT_ID=$(gcloud config get-value project)
 
-
-gcloud storage buckets create gs://$PROJECT_ID-tf-state --project=$PROJECT_ID --location=$REGION --uniform-bucket-level-access
-
 gcloud services enable cloudresourcemanager.googleapis.com --project=$PROJECT_ID
 
+gcloud storage buckets create gs://$PROJECT_ID-tf-state --project=$PROJECT_ID --location=$REGION --uniform-bucket-level-access
 
 cat > firewall.tf <<EOF_END
 terraform {
