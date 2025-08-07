@@ -22,6 +22,9 @@ gcloud services enable cloudresourcemanager.googleapis.com --project=$PROJECT_ID
 
 gcloud storage buckets create gs://$PROJECT_ID-tf-state --project=$PROJECT_ID --location=$REGION --uniform-bucket-level-access
 
+
+terraform init
+
 cat > firewall.tf <<EOF_END
 terraform {
   required_providers {
@@ -101,8 +104,6 @@ output "subnet_name" {
   description = "The name of the subnetwork"
 }
 EOF_END
-
-terraform init
 
 terraform plan
 
