@@ -13,6 +13,12 @@ sudo chmod +x Abhi_VPC_Subnet.sh
 ./Abhi_VPC_Subnet.sh
 ```
 
+```
+terraform init
+terraform plan
+terraform apply --auto-approve
+```
+
 ## ©Credit :
 - All rights and credits goes to original content of Google Cloud [Google Cloud SkillBoost](https://www.cloudskillsboost.google/) 
 
