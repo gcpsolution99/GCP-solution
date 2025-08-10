@@ -86,6 +86,7 @@ EOF_END
 
 sleep 20
 
+cat > Dockerfile <<EOF_END
 FROM python:3.9-slim-buster
 
 WORKDIR /app
@@ -96,6 +97,7 @@ RUN pip3 install -r requirements.txt
 COPY . .
 
 CMD ["python3", "app.py"]
+EOF_END
 
 sleep 20
 
@@ -103,7 +105,7 @@ gcloud artifacts repositories create arcade-images --repository-format=docker --
 
 docker build -t us-west1-docker.pkg.dev/$PROJECT_ID/arcade-images/arcade-secret:latest .
 
-docker run --rm -p 8080:8080 us-west1-docker.pkg.dev/$PROJECT_ID/arcade-images/arcade-secret:latest
+docker run --rm -d -p 8080:8080 us-west1-docker.pkg.dev/$PROJECT_ID/arcade-images/arcade-secret:latest
 
 sleep 20
 
@@ -114,7 +116,7 @@ gcloud iam service-accounts create arcade-service \
   --display-name="Arcade Service Account" \
   --description="Service account for Cloud Run application"
 
-  gcloud secrets add-iam-policy-binding arcade-secret \
+gcloud secrets add-iam-policy-binding arcade-secret \
 --member="serviceAccount:arcade-service@qwiklabs-gcp-04-920c0e8b7d64.iam.gserviceaccount.com" \
 --role="roles/secretmanager.secretAccessor"
 
@@ -127,9 +129,9 @@ gcloud run deploy arcade-service \
   --allow-unauthenticated
 
 
-  gcloud run services describe arcade-service --region=$REGION --format='value(status.url)'
+gcloud run services describe arcade-service --region=$REGION --format='value(status.url)'
 
-  curl $(gcloud run services describe arcade-service --region=$REGION --format='value(status.url)') | jq
+curl $(gcloud run services describe arcade-service --region=$REGION --format='value(status.url)') | jq
 
 pattern=(
 "**********************************************************"
