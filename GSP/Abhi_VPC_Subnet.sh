@@ -102,6 +102,10 @@ output "subnet_name" {
 }
 EOF_END
 
+terraform init
+terraform plan
+terraform apply --auto-approve
+
 pattern=(
 "**********************************************************"
 "**                 S U B S C R I B E  TO                **"
