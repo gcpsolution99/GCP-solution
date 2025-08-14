@@ -20,7 +20,7 @@ gcloud compute instances create www-1 \
     --image-family debian-11 \
     --image-project debian-cloud \
     --machine-type e2-micro \
-    --zone $REGION1-d \
+    --zone $ZONE1 \
     --tags http-tag \
     --metadata startup-script="#! /bin/bash
       apt-get update
@@ -34,7 +34,7 @@ gcloud compute instances create www-2 \
     --image-family debian-11 \
     --image-project debian-cloud \
     --machine-type e2-micro \
-    --zone $REGION1-d \
+    --zone $ZONE1 \
     --tags http-tag \
     --metadata startup-script="#! /bin/bash
       apt-get update
@@ -48,7 +48,7 @@ gcloud compute instances create www-3 \
     --image-family debian-11 \
     --image-project debian-cloud \
     --machine-type e2-micro \
-    --zone $REGION2-c \
+    --zone $ZONE2 \
     --tags http-tag \
     --metadata startup-script="#! /bin/bash
       apt-get update
@@ -62,7 +62,7 @@ gcloud compute instances create www-4 \
     --image-family debian-11 \
     --image-project debian-cloud \
     --machine-type e2-micro \
-    --zone $REGION2-c \
+    --zone $ZONE2 \
     --tags http-tag \
     --metadata startup-script="#! /bin/bash
       apt-get update
@@ -82,33 +82,31 @@ gcloud compute addresses create lb-ip-cr \
     --global
 
 
-gcloud compute instance-groups unmanaged create $REGION1-resources-w --zone $REGION1-d
+gcloud compute instance-groups unmanaged create $REGION1-resources-w --zone $ZONE1
 
 
-gcloud compute instance-groups unmanaged create $REGION2-resources-w --zone $REGION2-c
+gcloud compute instance-groups unmanaged create $REGION2-resources-w --zone $ZONE2
 
 
 gcloud compute instance-groups unmanaged add-instances $REGION1-resources-w \
     --instances www-1,www-2 \
-    --zone $REGION1-d
+    --zone $ZONE1
 
 gcloud compute instance-groups unmanaged add-instances $REGION2-resources-w \
     --instances www-3,www-4 \
-    --zone $REGION2-c
+    --zone $ZONE2
 
 gcloud compute health-checks create http http-basic-check
 
 
-
-
 gcloud compute instance-groups unmanaged set-named-ports $REGION1-resources-w \
     --named-ports http:80 \
-    --zone $REGION1-d
+    --zone $ZONE1
 
 
 gcloud compute instance-groups unmanaged set-named-ports $REGION2-resources-w \
     --named-ports http:80 \
-    --zone $REGION2-c
+    --zone $ZONE2
 
 
 gcloud compute backend-services create web-map-backend-service \
@@ -122,7 +120,7 @@ gcloud compute backend-services add-backend web-map-backend-service \
     --max-utilization 0.8 \
     --capacity-scaler 1 \
     --instance-group $REGION1-resources-w \
-    --instance-group-zone $REGION1-d \
+    --instance-group-zone $ZONE1 \
     --global
 
 
@@ -131,7 +129,7 @@ gcloud compute backend-services add-backend web-map-backend-service \
     --max-utilization 0.8 \
     --capacity-scaler 1 \
     --instance-group $REGION2-resources-w \
-    --instance-group-zone $REGION2-c \
+    --instance-group-zone $ZONE2 \
     --global
 
 
