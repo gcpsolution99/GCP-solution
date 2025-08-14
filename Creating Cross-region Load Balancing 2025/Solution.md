@@ -7,6 +7,8 @@
 ```
 export REGION1=
 export REGION2=
+export ZONE1=
+export ZONE2=
 ```
 
 ```
