@@ -13,7 +13,7 @@ do
     echo -e "${YELLOW}${line}${NC}"
 done
 gcloud auth list
-
+gcloud config list project
 export REGION2=${ZONE2%-*}
 
 export REGION=${ZONE%-*}
