@@ -6,6 +6,15 @@
 ## ✅ Run in CloudShell and follow video:
 
 ```
+export region1=
+export zone1=
+export region2=
+export zone2=
+export region3=
+export zone3=
+```
+
+```
 curl -LO raw.githubusercontent.com/gcpsolution99/GCP-solution/refs/heads/main/GSP/GSP1008_abhi.sh
 
 sudo chmod +x GSP1008_abhi.sh
