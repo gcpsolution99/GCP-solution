@@ -56,6 +56,9 @@ CP_IP=$(gcloud compute instances describe web-server --zone=$ZONE --format='get(
 export MY_SERVER=$CP_IP
 for ((i=1;i<=50;i++)); do curl $MY_SERVER; done
 
+echo
+echo -e "\e[1;33mEdit Firewall\e[0m \e[1;34mhttps://console.cloud.google.com/net-security/firewall-manager/firewall-policies/details/allow-http-ssh?project=$DEVSHELL_PROJECT_ID\e[0m"
+echo
 echo -e "\e[1;33mCreate an export sink\e[0m \e[1;34mhttps://console.cloud.google.com/logs/query;query=resource.type%3D%22gce_subnetwork%22%0Alog_name%3D%22projects%2F$DEVSHELL_PROJECT_ID%2Flogs%2Fcompute.googleapis.com%252Fvpc_flows%22;cursorTimestamp=2024-06-03T07:20:00.734122029Z;duration=PT1H?project=$DEVSHELL_PROJECT_ID\e[0m"
 echo
 
