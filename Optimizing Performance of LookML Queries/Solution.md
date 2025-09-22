@@ -45,7 +45,7 @@ view: incremental_pdt {
     type: date_month
   }
   dimension: state {
-    description: "do like & subscribe techcps"
+    description: ""
   }
   measure: average_sale_price {
     type: average
