@@ -12,13 +12,8 @@ for line in "${pattern[@]}"
 do
     echo -e "${YELLOW}${line}${NC}"
 done
-
-
-
 export REGION=${ZONE%-*}
-
 export REGION2=${ZONE2%-*}
-
 
 gcloud services enable compute.googleapis.com --project=$DEVSHELL_PROJECT_ID
 mkdir tfnet
