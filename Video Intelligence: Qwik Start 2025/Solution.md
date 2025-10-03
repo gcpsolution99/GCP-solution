@@ -8,7 +8,7 @@
 ```
 curl -LO raw.githubusercontent.com/gcpsolution99/GCP-solution/refs/heads/main/GSP/GSP154_abhi.sh
 
-sudo chmod +x GSP1108_2025abhi.sh
+sudo chmod +x GSP154_abhi.sh
 
 ./GSP154_abhi.sh
 ```
